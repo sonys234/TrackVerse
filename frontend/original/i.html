@@ -1,0 +1,60 @@
+html <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracker App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <!-- Three Mini Bars Button -->
+        <div class="menu-icon" onclick="toggleSlider()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <!-- Date and Time -->
+        <div class="date-time" id="date-time"></div>
+    </div>
+
+    <!-- Slider Bar -->
+    <div class="slider-bar" id="slider-bar">
+        <div class="slider-content">
+            <!-- Settings and Login/Logout at the bottom -->
+            <div class="slider-bottom">
+                <a href="#">Settings</a>
+                <a href="#">Login/Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Tracker Boxes -->
+    <div class="trackers">
+        <div class="tracker">Task Tracker</div>
+        <div class="tracker">Study Tracker</div>
+        <div class="tracker">Exercise Tracker</div>
+        <div class="tracker">Food Tracker</div>
+        <div class="tracker">Self Care Tracker</div>
+    </div>
+
+    <!-- Bottom Circle -->
+    <div class="bottom-circle" id="bottom-circle" onclick="toggleOptions()">
+        <div class="circle"></div>
+    </div>
+
+   <!-- Options (Mic and Plus) -->
+<!-- Options (Mic and Plus as Stickers) -->
+<div class="options" id="options">
+    <div class="option">
+        <img src="{{ url_for('static', filename='images/plus-sticker.png') }}" class="sticker" alt="Add">
+    </div>
+    <div class="option">
+        <img src="{{ url_for('static', filename='images/mic-sticker.png') }}" class="sticker" alt="Mic">
+    </div>
+</div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

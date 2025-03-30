@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #A5D6A7; /* Light Green */
+        }
+        .container {
+            width: 50%;
+            margin: 20px auto;
+            background: rgb(131, 255, 143);
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgb(195, 196, 195);
+            border-radius: 8px;
+        }
+        input, button {
+            margin: 5px;
+            padding: 10px;
+            width: 80%;
+        }
+        button {
+            cursor: pointer;
+            background-color: #388E3C; /* Medium Green */
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #2C6B2F; /* Darker Green */
+        }
+        .reset-btn {
+            background-color: #D32F2F; /* Red */
+        }
+        .reset-btn:hover {
+            background-color: #B71C1C;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #388E3C; /* Medium Green */
+            color: white;
+        }
+        .done {
+            text-decoration: line-through;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Diet Tracker</h2>
+
+        <label for="breakfast">Breakfast:</label>
+        <input type="text" id="breakfast" placeholder="Enter breakfast">
+        
+        <label for="lunch">Lunch:</label>
+        <input type="text" id="lunch" placeholder="Enter lunch">
+        
+        <label for="dinner">Dinner:</label>
+        <input type="text" id="dinner" placeholder="Enter dinner">
+
+        <button onclick="addMeals()">Enter</button>
+        <button class="reset-btn" onclick="resetTracker()">Reset</button>
+
+        <h3>Meal Log</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Done</th>
+                    <th>Meal</th>
+                    <th>Food</th>
+                </tr>
+            </thead>
+            <tbody id="mealList"></tbody>
+        </table>
+
+        <h3>Additional Tasks</h3>
+        <input type="text" id="task" placeholder="Add a task">
+        <button onclick="addTask()">Add Task</button>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Done</th>
+                    <th>Task</th>
+                </tr>
+            </thead>
+            <tbody id="taskList"></tbody>
+        </table>
+    </div>
+
+    <script>
+        function addMeals() {
+            let breakfast = document.getElementById("breakfast").value.trim();
+            let lunch = document.getElementById("lunch").value.trim();
+            let dinner = document.getElementById("dinner").value.trim();
+
+            if (breakfast || lunch || dinner) {
+                let mealList = document.getElementById("mealList");
+
+                if (breakfast) {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><input type="checkbox" onclick="toggleDone(this)"></td>
+                        <td><b>Breakfast</b></td>
+                        <td>${breakfast}</td>
+                    `;
+                    mealList.appendChild(row);
+                }
+
+                if (lunch) {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><input type="checkbox" onclick="toggleDone(this)"></td>
+                        <td><b>Lunch</b></td>
+                        <td>${lunch}</td>
+                    `;
+                    mealList.appendChild(row);
+                }
+
+                if (dinner) {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td><input type="checkbox" onclick="toggleDone(this)"></td>
+                        <td><b>Dinner</b></td>
+                        <td>${dinner}</td>
+                    `;
+                    mealList.appendChild(row);
+                }
+
+                document.getElementById("breakfast").value = "";
+                document.getElementById("lunch").value = "";
+                document.getElementById("dinner").value = "";
+            }
+        }
+
+        function addTask() {
+            let taskInput = document.getElementById("task");
+            let taskText = taskInput.value.trim();
+
+            if (taskText !== "") {
+                let taskList = document.getElementById("taskList");
+                let row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td><input type="checkbox" onclick="toggleDone(this)"></td>
+                    <td>${taskText}</td>
+                `;
+
+                taskList.appendChild(row);
+                taskInput.value = "";
+            }
+        }
+
+        function toggleDone(checkbox) {
+            let row = checkbox.parentNode.parentNode;
+            if (checkbox.checked) {
+                row.classList.add("done");
+            } else {
+                row.classList.remove("done");
+            }
+        }
+
+        function resetTracker() {
+            document.getElementById("mealList").innerHTML = "";
+            document.getElementById("taskList").innerHTML = "";
+            document.getElementById("breakfast").value = "";
+            document.getElementById("lunch").value = "";
+            document.getElementById("dinner").value = "";
+            document.getElementById("task").value = "";
+        }
+    </script>
+
+</body>
+</html>

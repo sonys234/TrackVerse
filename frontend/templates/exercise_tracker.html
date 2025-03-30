@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin: 15px 0;
+        }
+
+        label {
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            font-size: 16px;
+            background-color: #f9f9f9;
+            transition: all 0.3s;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus, select:focus {
+            border-color: #4CAF50;
+            outline: none;
+            background-color: #f1f1f1;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .output {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .output p {
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .output span {
+            font-weight: normal;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Fitness Tracker</h1>
+
+    <!-- Heart Rate Section -->
+    <div class="input-group">
+        <label for="heartRate">Enter your Heart Rate (bpm):</label>
+        <input type="number" id="heartRate" placeholder="e.g., 75" />
+    </div>
+
+    <!-- Step Tracker Section -->
+    <div class="input-group">
+        <label for="steps">Enter the number of Steps:</label>
+        <input type="number" id="steps" placeholder="e.g., 5000" />
+    </div>
+
+    <!-- Protein and Carbs Tracker Section -->
+    <div class="input-group">
+        <label for="protein">Enter Protein (g):</label>
+        <input type="number" id="protein" placeholder="e.g., 50" />
+    </div>
+    
+    <div class="input-group">
+        <label for="proteinSource">Select Protein Source:</label>
+        <select id="proteinSource">
+            <option value="Chicken">Chicken (30g per 100g)</option>
+            <option value="Tofu">Tofu (15g per 100g)</option>
+            <option value="Eggs">Eggs (12g per 100g)</option>
+            <option value="Almonds">Almonds (21g per 100g)</option>
+            <option value="Fruits">Fruits (Low Protein)</option>
+            <option value="Fish">Fish (20g per 100g)</option>
+        </select>
+    </div>
+
+    <div class="input-group">
+        <label for="carbs">Enter Carbs (g):</label>
+        <input type="number" id="carbs" placeholder="e.g., 150" />
+    </div>
+
+    <!-- Submit Button -->
+    <button id="submitButton">Submit</button>
+
+    <!-- Output Display -->
+    <div class="output" id="outputDisplay"></div>
+</div>
+
+<script>
+    const submitButton = document.getElementById('submitButton');
+    const heartRateInput = document.getElementById('heartRate');
+    const stepsInput = document.getElementById('steps');
+    const proteinInput = document.getElementById('protein');
+    const proteinSourceSelect = document.getElementById('proteinSource');
+    const carbsInput = document.getElementById('carbs');
+    const outputDisplay = document.getElementById('outputDisplay');
+
+    submitButton.addEventListener('click', function() {
+        const heartRate = heartRateInput.value.trim();
+        const steps = stepsInput.value.trim();
+        const protein = proteinInput.value.trim();
+        const proteinSource = proteinSourceSelect.value;
+        const carbs = carbsInput.value.trim();
+
+        if (heartRate && steps && protein && carbs) {
+            outputDisplay.innerHTML = `
+                <p><strong>Heart Rate:</strong> <span>${heartRate} bpm</span></p>
+                <p><strong>Steps Taken:</strong> <span>${steps} steps</span></p>
+                <p><strong>Protein Consumed:</strong> <span>${protein}g from ${proteinSource}</span></p>
+                <p><strong>Carbs Consumed:</strong> <span>${carbs}g</span></p>
+            `;
+        } else {
+            outputDisplay.innerHTML = '<p>Please fill out all fields.</p>';
+        }
+    });
+</script>
+
+</body>
+</html>

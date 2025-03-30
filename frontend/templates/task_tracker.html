@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Tracker</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background-color: #d0f0fd; 
+        }
+        .task-container { 
+            max-width: 600px; 
+            margin: auto; 
+            background: #b2dffb; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1); 
+        }
+        .task { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 10px; 
+            border: 1px solid #90c8e8; 
+            margin-top: 5px; 
+            border-radius: 5px; 
+            background-color: #e3f2fd; 
+        }
+        .completed { 
+            text-decoration: line-through; 
+            color: grey; 
+        }
+        .high { 
+            color: #ff4d4d; 
+            font-weight: bold; 
+        }
+        .medium { 
+            color: #ffa500; 
+        }
+        .low { 
+            color: #32cd32; 
+        }
+        button { 
+            cursor: pointer; 
+            padding: 8px 12px; 
+            border: none; 
+            border-radius: 5px; 
+            background-color: #0096c7; 
+            color: white; 
+            transition: background 0.3s ease-in-out; 
+        }
+        button:hover { 
+            background-color: #0077b6; 
+        }
+        input, select { 
+            padding: 8px; 
+            margin: 5px; 
+            border: 1px solid #90c8e8; 
+            border-radius: 5px; 
+            background: #caf0f8; 
+        }
+        h2, h3 { 
+            color: #0077b6; 
+            text-align: center; 
+        }
+    </style>
+</head>
+<body>
+    <div class="task-container">
+        <h2>Task Tracker</h2>
+        <input type="text" id="taskInput" placeholder="Task Name">
+        <input type="date" id="dueDate">
+        <input type="time" id="taskTime">
+        <select id="priority">
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+        </select>
+        <button onclick="addTask()">Add Task</button>
+        
+        <h3>Pending Tasks</h3>
+        <div id="taskList"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", loadTasks);
+
+        function loadTasks() {
+            fetch("/tasks")
+                .then(response => response.json())
+                .then(tasks => {
+                    let taskList = document.getElementById("taskList");
+                    taskList.innerHTML = "";
+                    tasks.forEach(task => {
+                        let taskDiv = document.createElement("div");
+                        taskDiv.className = "task " + (task.completed ? "completed" : "");
+                        taskDiv.innerHTML = `
+                            <span class="${task.priority}">${task.name} (Due: ${task.due_date} at ${task.task_time})</span>
+                            <input type="checkbox" ${task.completed ? "checked" : ""} onchange="toggleTask(${task.id})">
+                            <button onclick="deleteTask(${task.id})">Delete</button>
+                        `;
+                        taskList.appendChild(taskDiv);
+                    });
+                })
+                .catch(error => console.error("Error loading tasks:", error));
+        }
+
+        function addTask() {
+            let taskName = document.getElementById("taskInput").value.trim();
+            if (taskName === "") {
+                alert("Task name cannot be empty!");
+                return;
+            }
+
+            let task = {
+                name: taskName,
+                due_date: document.getElementById("dueDate").value,
+                task_time: document.getElementById("taskTime").value,
+                priority: document.getElementById("priority").value,
+                completed: false // Default value for new tasks
+            };
+
+            fetch("/tasks", { 
+                method: "POST", 
+                body: JSON.stringify(task), 
+                headers: { "Content-Type": "application/json" } 
+            }).then(response => response.json())
+              .then(() => {
+                  document.getElementById("taskInput").value = "";
+                  loadTasks();
+              })
+              .catch(error => console.error("Error adding task:", error));
+        }
+
+        function toggleTask(id) {
+            fetch(`/tasks/${id}`, { method: "PUT" })
+                .then(() => loadTasks())
+                .catch(error => console.error("Error updating task:", error));
+        }
+
+        function deleteTask(id) {
+            fetch(`/tasks/${id}`, { method: "DELETE" })
+                .then(() => loadTasks())
+                .catch(error => console.error("Error deleting task:", error));
+        }
+    </script>
+</body>
+</html>

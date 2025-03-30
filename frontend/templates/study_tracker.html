@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Tracker</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        
+        :root {
+            --pastel-blue: #a2d2ff;
+            --pastel-pink: #ffafcc;
+            --pastel-green: #bde0fe;
+            --pastel-purple: #cdb4db;
+            --pastel-yellow: #ffd6a5;
+            --pastel-mint: #caffbf;
+            --pastel-peach: #ffc8dd;
+            --pastel-lavender: #e0bbe4;
+            --soft-white: #f8f9fa;
+            --soft-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', cursive, sans-serif;
+        }
+        
+        body {
+            background-color: var(--soft-white);
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .top-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--pastel-blue);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            position: absolute;
+            left: 30px;
+        }
+        
+        .datetime {
+            position: absolute;
+            right: 20px;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .subject-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .subject-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .subject-card.completed {
+            background-color: var(--pastel-mint);
+        }
+        
+        .subject-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .subject-title-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .subject-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .subject-priority-star {
+            cursor: pointer;
+            color: #ddd;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+        
+        .subject-priority-star.active {
+            color: #ffcc00;
+            text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+        }
+        
+        .subject-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .subject-progress {
+            width: 100%;
+            height: 10px;
+            background-color: var(--soft-gray);
+            border-radius: 5px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .subject-progress-bar {
+            height: 100%;
+            background-color: var(--pastel-green);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .subject-delete-btn {
+            position: absolute;
+            top: 20px;
+            right: 120px;
+            background-color: var(--pastel-pink);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .subject-card.completed .subject-delete-btn {
+            display: block;
+        }
+        
+        .add-task-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--pastel-pink);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .task-list {
+            margin-left: 20px;
+            margin-top: 15px;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: var(--soft-gray);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .task-item.completed {
+            background-color: var(--pastel-mint);
+        }
+        
+        .priority-star {
+            margin-right: 10px;
+            cursor: pointer;
+            color: #ddd;
+            font-size: 20px;
+            transition: all 0.2s;
+        }
+        
+        .priority-star.active {
+            color: #ffcc00;
+            text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+        }
+        
+        .task-checkbox {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .task-info {
+            flex-grow: 1;
+        }
+        
+        .task-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .task-due {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .task-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .progress-circle-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: conic-gradient(var(--pastel-green) 0%, var(--soft-gray) 0%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-circle-small:hover {
+            transform: scale(1.1);
+        }
+        
+        .timer-btn, .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .timer-btn {
+            background-color: var(--pastel-peach);
+        }
+        
+        .delete-btn {
+            background-color: var(--pastel-pink);
+        }
+        
+        .timer-btn:hover, .delete-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .add-subject-btn {
+            display: block;
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: var(--pastel-lavender);
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .add-subject-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state h3 {
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        .empty-state p {
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+        
+        .empty-state-btn {
+            padding: 12px 24px;
+            background-color: var(--pastel-lavender);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .empty-state-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .modal-title {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .cancel-btn, .submit-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .cancel-btn {
+            background-color: var(--soft-gray);
+        }
+        
+        .submit-btn {
+            background-color: var(--pastel-blue);
+            color: white;
+        }
+        
+        .progress-modal {
+            text-align: center;
+        }
+        
+        .progress-circle-large {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background: conic-gradient(var(--pastel-green) 0%, var(--soft-gray) 0%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 36px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-options {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .progress-option {
+            padding: 8px 15px;
+            background-color: var(--pastel-yellow);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        /* Timer Card */
+        .timer-card {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 99;
+            display: none;
+            width: 200px;
+        }
+        
+        .timer-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .timer-card-title {
+            font-weight: bold;
+        }
+        
+        .timer-card-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .timer-card-display {
+            font-size: 24px;
+            text-align: center;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        
+        .timer-card-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .timer-card-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .timer-card-start {
+            background-color: var(--pastel-mint);
+        }
+        
+        .timer-card-pause {
+            background-color: var(--pastel-yellow);
+        }
+        
+        .timer-card-reset {
+            background-color: var(--pastel-pink);
+        }
+
+        .timer-duration-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .timer-duration-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--pastel-blue);
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .no-tasks-message {
+            color: #666;
+            font-style: italic;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="logo">Study Tracker</div>
+        <div class="datetime" id="datetime">Loading...</div>
+    </div>
+    
+    <div class="main-content">
+        <div class="subject-container" id="subjectContainer">
+            <div class="empty-state" id="emptyState">
+                <h3>Welcome to Study Tracker!</h3>
+                <p>You don't have any subjects yet. Let's get started by adding your first subject.</p>
+                <button class="empty-state-btn" id="emptyStateBtn">Add Your First Subject</button>
+            </div>
+        </div>
+        
+        <button class="add-subject-btn" id="addSubjectBtn" style="display: none;">+ Add Subject</button>
+    </div>
+    
+    <!-- Timer Card -->
+    <div class="timer-card" id="timerCard">
+        <div class="timer-card-header">
+            <div class="timer-card-title" id="timerCardTitle">Study Timer</div>
+            <button class="timer-card-close" id="timerCardClose">×</button>
+        </div>
+        <div class="timer-card-display" id="timerCardDisplay">25:00</div>
+        <div class="timer-card-controls">
+            <button class="timer-card-btn timer-card-start" id="timerCardStart">Start</button>
+            <button class="timer-card-btn timer-card-pause" id="timerCardPause">Pause</button>
+            <button class="timer-card-btn timer-card-reset" id="timerCardReset">Reset</button>
+        </div>
+        <div class="timer-duration-controls">
+            <button class="timer-duration-btn" id="decreaseTimer">-</button>
+            <span id="timerDurationDisplay">25 min</span>
+            <button class="timer-duration-btn" id="increaseTimer">+</button>
+        </div>
+    </div>
+    
+    <!-- Add Subject Modal - SIMPLIFIED to only ask for subject name -->
+    <div class="modal" id="subjectModal">
+        <div class="modal-content">
+            <div class="modal-title">Add New Subject</div>
+            <div class="form-group">
+                <label for="subjectName">Subject Name</label>
+                <input type="text" id="subjectName" placeholder="e.g. Mathematics, History">
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelSubject">Cancel</button>
+                <button class="submit-btn" id="submitSubject">Add Subject</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-title">Add New Task</div>
+            <div class="form-group">
+                <label for="taskName">Task Name</label>
+                <input type="text" id="taskName" placeholder="e.g. Read chapter 3, Solve problems">
+            </div>
+            <div class="form-group">
+                <label for="taskDueDate">Due Date & Time (Optional)</label>
+                <input type="datetime-local" id="taskDueDate">
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="cancelTask">Cancel</button>
+                <button class="submit-btn" id="submitTask">Add Task</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Progress Modal -->
+    <div class="modal" id="progressModal">
+        <div class="modal-content progress-modal">
+            <div class="modal-title">Task Progress</div>
+            <div class="progress-circle-large" id="progressCircleLarge">0%</div>
+            <div class="progress-options">
+                <button class="progress-option" data-progress="0">0%</button>
+                <button class="progress-option" data-progress="25">25%</button>
+                <button class="progress-option" data-progress="50">50%</button>
+                <button class="progress-option" data-progress="75">75%</button>
+                <button class="progress-option" data-progress="100">100%</button>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" id="closeProgress">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Start with empty subjects array
+        let subjects = [];
+        
+        // DOM elements
+        const datetimeElement = document.getElementById('datetime');
+        const subjectContainer = document.getElementById('subjectContainer');
+        const emptyState = document.getElementById('emptyState');
+        const emptyStateBtn = document.getElementById('emptyStateBtn');
+        const addSubjectBtn = document.getElementById('addSubjectBtn');
+        const subjectModal = document.getElementById('subjectModal');
+        const taskModal = document.getElementById('taskModal');
+        const progressModal = document.getElementById('progressModal');
+        const timerCard = document.getElementById('timerCard');
+        const timerCardDisplay = document.getElementById('timerCardDisplay');
+        const timerCardTitle = document.getElementById('timerCardTitle');
+        const timerCardStart = document.getElementById('timerCardStart');
+        const timerCardPause = document.getElementById('timerCardPause');
+        const timerCardReset = document.getElementById('timerCardReset');
+        const timerCardClose = document.getElementById('timerCardClose');
+        const timerDurationDisplay = document.getElementById('timerDurationDisplay');
+        const decreaseTimerBtn = document.getElementById('decreaseTimer');
+        const increaseTimerBtn = document.getElementById('increaseTimer');
+        
+        // Current state
+        let currentSubjectId = null;
+        let currentTaskId = null;
+        let timerInterval = null;
+        let timerSeconds = 25 * 60;
+        let isTimerRunning = false;
+        let currentTaskForTimer = null;
+        let timerDuration = 25; // Default 25 minutes
+        
+        // Initialize the app
+        function init() {
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Load data from localStorage if available
+            const savedSubjects = localStorage.getItem('studyTrackerSubjects');
+            if (savedSubjects) {
+                subjects = JSON.parse(savedSubjects);
+                renderSubjects();
+            } else {
+                showEmptyState();
+            }
+            
+            // Event listeners
+            emptyStateBtn.addEventListener('click', openSubjectModal);
+            addSubjectBtn.addEventListener('click', openSubjectModal);
+            document.getElementById('cancelSubject').addEventListener('click', closeSubjectModal);
+            document.getElementById('submitSubject').addEventListener('click', addSubject);
+            document.getElementById('cancelTask').addEventListener('click', closeTaskModal);
+            document.getElementById('submitTask').addEventListener('click', addTask);
+            document.getElementById('closeProgress').addEventListener('click', closeProgressModal);
+            
+            // Timer card controls
+            timerCardStart.addEventListener('click', startTimer);
+            timerCardPause.addEventListener('click', pauseTimer);
+            timerCardReset.addEventListener('click', resetTimer);
+            timerCardClose.addEventListener('click', closeTimerCard);
+            decreaseTimerBtn.addEventListener('click', decreaseTimerDuration);
+            increaseTimerBtn.addEventListener('click', increaseTimerDuration);
+            
+            // Progress options
+            document.querySelectorAll('.progress-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    updateProgress(parseInt(this.getAttribute('data-progress')));
+                });
+            });
+
+            // Initialize timer display
+            updateTimerDurationDisplay();
+        }
+        
+        // Timer duration controls
+        function decreaseTimerDuration() {
+            if (timerDuration > 1) {
+                timerDuration--;
+                updateTimerDurationDisplay();
+                if (!isTimerRunning) {
+                    resetTimer();
+                }
+            }
+        }
+
+        function increaseTimerDuration() {
+            if (timerDuration < 120) {
+                timerDuration++;
+                updateTimerDurationDisplay();
+                if (!isTimerRunning) {
+                    resetTimer();
+                }
+            }
+        }
+
+        function updateTimerDurationDisplay() {
+            timerDurationDisplay.textContent = `${timerDuration} min`;
+        }
+        
+        // Show empty state
+        function showEmptyState() {
+            emptyState.style.display = 'block';
+            addSubjectBtn.style.display = 'none';
+            subjectContainer.innerHTML = '';
+            subjectContainer.appendChild(emptyState);
+        }
+        
+        // Hide empty state
+        function hideEmptyState() {
+            emptyState.style.display = 'none';
+            addSubjectBtn.style.display = 'block';
+        }
+        
+        // Update date and time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            datetimeElement.textContent = now.toLocaleDateString('en-US', options);
+        }
+        
+        // Calculate subject progress based on average of all task progresses
+        function calculateSubjectProgress(subject) {
+            if (subject.tasks.length === 0) return 0;
+            
+            const totalProgress = subject.tasks.reduce((sum, task) => sum + task.progress, 0);
+            return Math.round(totalProgress / subject.tasks.length);
+        }
+        
+        // Check if subject is completed (all tasks 100%)
+        function isSubjectCompleted(subject) {
+            if (subject.tasks.length === 0) return false;
+            return subject.tasks.every(task => task.progress === 100);
+        }
+        
+        // Render subjects and tasks
+        function renderSubjects() {
+            if (subjects.length === 0) {
+                showEmptyState();
+                return;
+            }
+            
+            hideEmptyState();
+            subjectContainer.innerHTML = '';
+            
+            subjects.forEach(subject => {
+                const subjectProgress = calculateSubjectProgress(subject);
+                const isCompleted = isSubjectCompleted(subject);
+                
+                const subjectCard = document.createElement('div');
+                subjectCard.className = `subject-card ${isCompleted ? 'completed' : ''}`;
+                subjectCard.innerHTML = `
+                    <div class="subject-header">
+                        <div class="subject-title-container">
+                            <input type="checkbox" class="subject-checkbox" ${isCompleted ? 'checked' : ''} data-subject-id="${subject.id}">
+                            <span class="subject-priority-star ${subject.priority ? 'active' : ''}" data-subject-id="${subject.id}">★</span>
+                            <div class="subject-title">${subject.name}</div>
+                        </div>
+                        <button class="add-task-btn" data-subject-id="${subject.id}">+ Add Task</button>
+                        <button class="subject-delete-btn" data-subject-id="${subject.id}">Delete</button>
+                    </div>
+                    <div class="subject-progress">
+                        <div class="subject-progress-bar" style="width: ${subjectProgress}%"></div>
+                    </div>
+                    <div class="task-list" id="tasks-${subject.id}"></div>
+                `;
+                
+                subjectContainer.appendChild(subjectCard);
+                
+                const taskList = document.getElementById(`tasks-${subject.id}`);
+                
+                if (subject.tasks.length === 0) {
+                    taskList.innerHTML = '<p class="no-tasks-message">No tasks yet. Click +Add Task to get started!</p>';
+                } else {
+                    subject.tasks.forEach(task => {
+                        const dueDate = task.due ? new Date(task.due) : null;
+                        const taskItem = document.createElement('div');
+                        taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''}`;
+                        taskItem.innerHTML = `
+                            <span class="priority-star ${task.priority ? 'active' : ''}" data-subject-id="${subject.id}" data-task-id="${task.id}">★</span>
+                            <input type="checkbox" class="task-checkbox" ${task.progress === 100 ? 'checked' : ''} data-subject-id="${subject.id}" data-task-id="${task.id}">
+                            <div class="task-info">
+                                <div class="task-name">${task.name}</div>
+                                ${dueDate ? `<div class="task-due">Due: ${dueDate.toLocaleString()}</div>` : ''}
+                            </div>
+                            <div class="task-actions">
+                                <div class="progress-circle-small" data-subject-id="${subject.id}" data-task-id="${task.id}" style="background: conic-gradient(var(--pastel-green) ${task.progress}%, var(--soft-gray) ${task.progress}%">
+                                    ${task.progress}%
+                                </div>
+                                <button class="timer-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Timer</button>
+                                ${task.progress === 100 ? `<button class="delete-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Delete</button>` : ''}
+                            </div>
+                        `;
+                        taskList.appendChild(taskItem);
+                    });
+                }
+                
+                // Add event listener to the add task button for this subject
+                subjectCard.querySelector('.add-task-btn').addEventListener('click', function() {
+                    currentSubjectId = parseInt(this.getAttribute('data-subject-id'));
+                    openTaskModal();
+                });
+                
+                // Add event listener to subject delete button
+                subjectCard.querySelector('.subject-delete-btn').addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    deleteSubject(subjectId);
+                });
+                
+                // Add event listener to subject checkbox
+                subjectCard.querySelector('.subject-checkbox').addEventListener('change', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const subject = subjects.find(s => s.id === subjectId);
+                    
+                    // Mark all tasks as completed or not completed
+                    subject.tasks.forEach(task => {
+                        task.progress = this.checked ? 100 : 0;
+                    });
+                    
+                    renderSubjects();
+                });
+                
+                // Add event listener to subject priority star
+                subjectCard.querySelector('.subject-priority-star').addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const subject = subjects.find(s => s.id === subjectId);
+                    
+                    // Toggle priority
+                    subject.priority = !subject.priority;
+                    this.classList.toggle('active');
+                    
+                    // Save to localStorage
+                    localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
+                });
+            });
+            
+            // Add event listeners to all task priority stars
+            document.querySelectorAll('.priority-star').forEach(star => {
+                star.addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const taskId = parseInt(this.getAttribute('data-task-id'));
+                    const subject = subjects.find(s => s.id === subjectId);
+                    const task = subject.tasks.find(t => t.id === taskId);
+                    
+                    // Toggle priority
+                    task.priority = !task.priority;
+                    this.classList.toggle('active');
+                    
+                    // Save to localStorage
+                    localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
+                });
+            });
+            
+            // Add event listeners to all progress circles and timer buttons
+            document.querySelectorAll('.progress-circle-small').forEach(circle => {
+                circle.addEventListener('click', function() {
+                    currentSubjectId = parseInt(this.getAttribute('data-subject-id'));
+                    currentTaskId = parseInt(this.getAttribute('data-task-id'));
+                    openProgressModal();
+                });
+            });
+            
+            document.querySelectorAll('.timer-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const taskId = parseInt(this.getAttribute('data-task-id'));
+                    const subject = subjects.find(s => s.id === subjectId);
+                    const task = subject.tasks.find(t => t.id === taskId);
+                    currentTaskForTimer = task.name;
+                    timerCardTitle.textContent = task.name;
+                    openTimerCard();
+                });
+            });
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const taskId = parseInt(this.getAttribute('data-task-id'));
+                    deleteTask(subjectId, taskId);
+                });
+            });
+            
+            // Add event listeners to task checkboxes
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const taskId = parseInt(this.getAttribute('data-task-id'));
+                    const subject = subjects.find(s => s.id === subjectId);
+                    const task = subject.tasks.find(t => t.id === taskId);
+                    
+                    task.progress = this.checked ? 100 : 0;
+                    renderSubjects();
+                });
+            });
+            
+            // Save to localStorage
+            localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
+        }
+        
+        // Delete a task
+        function deleteTask(subjectId, taskId) {
+            if (confirm("Are you sure you want to delete this completed task?")) {
+                const subject = subjects.find(s => s.id === subjectId);
+                // Only remove the task, keep the subject
+                subject.tasks = subject.tasks.filter(t => t.id !== taskId);
+                renderSubjects();
+            }
+        }
+        
+        // Delete a subject
+        function deleteSubject(subjectId) {
+            if (confirm("Are you sure you want to delete this subject and all its tasks?")) {
+                subjects = subjects.filter(s => s.id !== subjectId);
+                renderSubjects();
+            }
+        }
+        
+        // Modal functions
+        function openSubjectModal() {
+            subjectModal.style.display = 'flex';
+            document.getElementById('subjectName').value = '';
+        }
+        
+        function closeSubjectModal() {
+            subjectModal.style.display = 'none';
+        }
+        
+        function openTaskModal() {
+            taskModal.style.display = 'flex';
+            document.getElementById('taskName').value = '';
+            document.getElementById('taskDueDate').value = '';
+        }
+        
+        function closeTaskModal() {
+            taskModal.style.display = 'none';
+        }
+        
+        function openProgressModal() {
+            const subject = subjects.find(s => s.id === currentSubjectId);
+            const task = subject.tasks.find(t => t.id === currentTaskId);
+            
+            const progressCircle = document.getElementById('progressCircleLarge');
+            progressCircle.style.background = `conic-gradient(var(--pastel-green) ${task.progress}%, var(--soft-gray) ${task.progress}%`;
+            progressCircle.textContent = `${task.progress}%`;
+            
+            progressModal.style.display = 'flex';
+        }
+        
+        function closeProgressModal() {
+            progressModal.style.display = 'none';
+        }
+        
+        // Timer card functions
+        function openTimerCard() {
+            timerCard.style.display = 'block';
+            resetTimer();
+        }
+        
+        function closeTimerCard() {
+            timerCard.style.display = 'none';
+            pauseTimer();
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const displayText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            timerCardDisplay.textContent = displayText;
+        }
+        
+        // Timer functions
+        function startTimer() {
+            if (isTimerRunning) return;
+            
+            isTimerRunning = true;
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+                
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    alert("Time's up! Take a short break.");
+                }
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            isTimerRunning = false;
+            clearInterval(timerInterval);
+        }
+        
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = timerDuration * 60;
+            updateTimerDisplay();
+        }
+        
+        function updateProgress(progress) {
+            const subject = subjects.find(s => s.id === currentSubjectId);
+            const task = subject.tasks.find(t => t.id === currentTaskId);
+            task.progress = progress;
+            
+            const progressCircle = document.getElementById('progressCircleLarge');
+            progressCircle.style.background = `conic-gradient(var(--pastel-green) ${progress}%, var(--soft-gray) ${progress}%`;
+            progressCircle.textContent = `${progress}%`;
+            
+            // Update the progress in the main view
+            renderSubjects();
+        }
+        
+        // Add subject
+        function addSubject() {
+            const name = document.getElementById('subjectName').value.trim();
+            
+            if (!name) {
+                alert('Please enter a subject name');
+                return;
+            }
+            
+            const newSubject = {
+                id: subjects.length > 0 ? Math.max(...subjects.map(s => s.id)) + 1 : 1,
+                name: name,
+                tasks: [], // Start with empty tasks array
+                priority: false // Default to not prioritized
+            };
+            
+            subjects.push(newSubject);
+            closeSubjectModal();
+            renderSubjects();
+        }
+        
+        // Add task to existing subject
+        function addTask() {
+            const name = document.getElementById('taskName').value.trim();
+            const due = document.getElementById('taskDueDate').value;
+            
+            if (!name) {
+                alert('Please enter a task name');
+                return;
+            }
+            
+            const subject = subjects.find(s => s.id === currentSubjectId);
+            const newTask = {
+                id: subject.tasks.length > 0 ? Math.max(...subject.tasks.map(t => t.id)) + 1 : 1,
+                name: name,
+                due: due || null, // Due date is optional
+                progress: 0,
+                priority: false // Default to not prioritized
+            };
+            
+            subject.tasks.push(newTask);
+            closeTaskModal();
+            renderSubjects();
+        }
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background:#F5F5DC;
+    color:#333;;
+}
+
+/* Top Bar */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #F8AD9D;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    backdrop-filter: blur(8px);
+}
+
+/* Three Mini Bars Button */
+.menu-icon {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: transform 0.3s;
+}
+
+.menu-icon .bar {
+    width: 28px;
+    height: 4px;
+    background-color: white;
+    border-radius: 4px;
+    transition: transform 0.3s;
+}
+
+/* Mini Bars Animation - Move Top and Bottom Bars to the Sides */
+.menu-icon.active {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Keeps 5px space between them */
+    align-items: center; /* Centers all bars */
+}
+
+.menu-icon.active .bar:nth-child(1) {
+    transform: translateY(9px) translateX(-10px) rotate(90deg);
+}
+
+.menu-icon.active .bar:nth-child(2) {
+    transform: rotate(90deg); /* Middle bar stays in place */
+}
+
+.menu-icon.active .bar:nth-child(3) {
+    transform: translateY(-9px) translateX(10px) rotate(90deg);
+}
+
+/* Date and Time */
+.date-time {
+    font-size: 18px;
+    font-family:'Dancing Script', cursive ;
+    color: black;
+}
+
+/* Sidebar - Default Closed */
+.slider-bar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #111827;  
+    backdrop-filter: blur(10px);
+    overflow-x: hidden;
+    transition: width 0.3s ease-in-out;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Open Sidebar */
+.slider-bar.open {
+    width: 240px;
+}
+/* Sidebar Content */
+.slider-content {
+    flex-grow: 1; /* Takes up all available space, pushing content to the bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Aligns everything at the bottom */
+    padding: 20px; /* Adjust padding as needed */
+}
+
+/* Sidebar Links */
+.slider-bar a {
+    padding: 12px 15px;
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+    border-radius: 8px;
+}
+
+.slider-bar a:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #f4c531;
+}
+
+/* Main Tracker Boxes */
+.trackers {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 90px 20px 20px;
+    max-width: 100%;
+    margin: auto; /* Adjust width of the whole section * /* Centers everything */
+    transition: all 0.3s ease-in-out;
+}
+
+/* When Sidebar is Open, Shift Trackers */
+.slider-bar.open ~ .trackers {
+    margin-left: 250px; /* Push trackers to the right */
+}
+
+/* When Sidebar Closes, Reset */
+.slider-bar:not(.open) ~ .trackers {
+    margin-left: 0;
+}
+
+/* Tracker Box Styling */
+.tracker {
+    background: linear-gradient(135deg, #f4c531, #d9a019);
+    color: #111;
+    padding: 20px; /* Reduce padding from 20px to 15px */
+    margin: 20px auto; /* Adds more space around the boxes */
+    width: calc(30% - 30px); /* Adjust width to fit 3 per row */
+    /* flex: 1 1 calc(30% - 30px);width: calc(20% - 15px);  */
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 23px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    font-family: 'Dancing Script', cursive;
+}
+
+.tracker:hover {
+    background: #ffd700;
+    transform: scale(1.05);
+    box-shadow: 0px 5px 15px rgba(255, 220, 19, 0.826);
+}
+
+a{
+    text-decoration: none;
+}
+
+/* Bottom Circle */
+/* Bottom Circle */
+.bottom-circle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    cursor: pointer;
+}
+
+.circle {
+    width: 55px; /* Updated size */
+    height: 55px;
+    background-color: #ccda2bf0; /* Updated color */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 26px; /* Updated font size */
+    transition: transform 0.2s ease-in-out;
+}
+
+.circle:hover {
+    background: #FFB6C1;
+    color: black;
+    transform: scale(1.1);
+    border: 1px;
+    
+}
+
+/* Options (Mike and Plus) */
+.options {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 12px; /* Updated gap */
+}
+
+.option {
+    width: 55px; /* Updated size */
+    height: 55px;
+    background-color: #222831; /* Updated color */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px; /* Updated font size */
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.option:hover {
+    background: #00FA9A;
+    color: black;
+    transform: scale(1.1);
+}
+
+/* Style for Image Icons */
+.option-img {
+    width: 50px;
+    height: 50px;
+    background-color: transparent;
+    border-radius: 50%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.option-img:hover {
+    transform: scale(1.1);
+}
+
+.sticker {
+    width: 50px;  /* Adjust size as needed */
+    height: 50px;
+    object-fit: contain;  /* Ensures the image fits properly */
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tracker, .circle, .option {
+    animation: fadeIn 0.5s ease-in-out;
+}

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Self-Care Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #E6E6FA;
+            text-align: center;
+            color: #4B0082;
+        }
+        .container {
+            width: 50%;
+            margin: 20px auto;
+            background: #D8BFD8;
+            padding: 20px;
+            box-shadow: 0px 0px 10px #9370DB;
+            border-radius: 8px;
+        }
+        input, button, select, textarea {
+            margin: 5px;
+            padding: 10px;
+            width: 80%;
+            border: 1px solid #9370DB;
+            border-radius: 5px;
+            background: #F8F0FF;
+            color: #4B0082;
+        }
+        button {
+            cursor: pointer;
+            background-color: #8A2BE2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #6A0DAD;
+        }
+        .reset-btn {
+            background-color: #9932CC;
+        }
+        .reset-btn:hover {
+            background-color: #800080;
+        }
+        .delete-btn {
+            background-color: #BA55D3;
+            padding: 5px;
+            font-size: 12px;
+            margin-left: 5px;
+            border-radius: 3px;
+        }
+        .journal-entry {
+            background-color: #EEE6FF;
+            padding: 10px;
+            margin: 10px auto;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px #9370DB;
+            width: 90%;
+            text-align: left;
+        }
+        .journal-date {
+            font-weight: bold;
+            color: #8A2BE2;
+        }
+        .journal-text {
+            margin-top: 5px;
+        }
+        .delete-journal {
+            background-color: #9932CC;
+            color: white;
+            border: none;
+            padding: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-journal:hover {
+            background-color: #800080;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌿 Self-Care Tracker</h2>
+        <h3>📝 Self-Care Journal</h3>
+        <input type="date" id="journalDate">
+        <textarea id="journal" placeholder="Write your thoughts..."></textarea>
+        <button onclick="saveJournal()">Save Entry</button>
+        <h3>📖 Your Journal Entries</h3>
+        <div id="journalEntries"></div>
+        <button class="reset-btn" onclick="resetTracker()">Reset All</button>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", loadData);
+        function saveJournal() {
+            let journalDate = document.getElementById("journalDate").value;
+            let journalText = document.getElementById("journal").value.trim();
+            if (journalDate !== "" && journalText !== "") {
+                let journalList = document.getElementById("journalEntries");
+                let entryDiv = document.createElement("div");
+                entryDiv.classList.add("journal-entry");
+                entryDiv.innerHTML = `
+                    <div class="journal-date">${journalDate}</div>
+                    <div class="journal-text">${journalText}</div>
+                    <button class="delete-journal" onclick="deleteJournalEntry(this, '${journalDate}', '${journalText}')">❌ Delete</button>
+                `;
+                journalList.appendChild(entryDiv);
+                saveJournalToLocal(journalDate, journalText);
+                document.getElementById("journal").value = "";
+            }
+        }
+        function saveJournalToLocal(date, entry) {
+            let journals = JSON.parse(localStorage.getItem("journals")) || [];
+            journals.push({ date, entry });
+            localStorage.setItem("journals", JSON.stringify(journals));
+        }
+        function deleteJournalEntry(button, date, entry) {
+            let journals = JSON.parse(localStorage.getItem("journals")) || [];
+            journals = journals.filter(j => !(j.date === date && j.entry === entry));
+            localStorage.setItem("journals", JSON.stringify(journals));
+            button.parentElement.remove();
+        }
+        function loadData() {
+            let journals = JSON.parse(localStorage.getItem("journals")) || [];
+            let journalList = document.getElementById("journalEntries");
+            journals.forEach(({ date, entry }) => {
+                let entryDiv = document.createElement("div");
+                entryDiv.classList.add("journal-entry");
+                entryDiv.innerHTML = `
+                    <div class="journal-date">${date}</div>
+                    <div class="journal-text">${entry}</div>
+                    <button class="delete-journal" onclick="deleteJournalEntry(this, '${date}', '${entry}')">❌ Delete</button>
+                `;
+                journalList.appendChild(entryDiv);
+            });
+        }
+        function resetTracker() {
+            document.getElementById("journalEntries").innerHTML = "";
+            localStorage.removeItem("journals");
+        }
+    </script>
+</body>
+</html>
