@@ -18,6 +18,7 @@
             --pastel-lavender: #e0bbe4;
             --soft-white: #f8f9fa;
             --soft-gray: #e9ecef;
+            --priority-color: #FFD166;
         }
         
         * {
@@ -62,6 +63,20 @@
             padding: 20px;
         }
         
+        .priority-section {
+            background-color: var(--priority-color);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .priority-section h2 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 20px;
+        }
+        
         .subject-container {
             max-width: 800px;
             margin: 0 auto;
@@ -78,6 +93,10 @@
         
         .subject-card.completed {
             background-color: var(--pastel-mint);
+        }
+        
+        .subject-card.priority {
+            border-left: 5px solid var(--priority-color);
         }
         
         .subject-header {
@@ -107,8 +126,8 @@
         }
         
         .subject-priority-star.active {
-            color: #ffcc00;
-            text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+            color: var(--priority-color);
+            text-shadow: 0 0 5px rgba(255, 209, 102, 0.5);
         }
         
         .subject-checkbox {
@@ -182,6 +201,10 @@
             background-color: var(--pastel-mint);
         }
         
+        .task-item.priority {
+            border-left: 5px solid var(--priority-color);
+        }
+        
         .priority-star {
             margin-right: 10px;
             cursor: pointer;
@@ -191,8 +214,8 @@
         }
         
         .priority-star.active {
-            color: #ffcc00;
-            text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+            color: var(--priority-color);
+            text-shadow: 0 0 5px rgba(255, 209, 102, 0.5);
         }
         
         .task-checkbox {
@@ -517,6 +540,11 @@
     </div>
     
     <div class="main-content">
+        <div id="priorityContainer" class="priority-section">
+            <h2>Priority</h2>
+            <div id="priorityItems"></div>
+        </div>
+        
         <div class="subject-container" id="subjectContainer">
             <div class="empty-state" id="emptyState">
                 <h3>Welcome to Study Tracker!</h3>
@@ -547,7 +575,7 @@
         </div>
     </div>
     
-    <!-- Add Subject Modal - SIMPLIFIED to only ask for subject name -->
+    <!-- Add Subject Modal -->
     <div class="modal" id="subjectModal">
         <div class="modal-content">
             <div class="modal-title">Add New Subject</div>
@@ -606,6 +634,8 @@
         // DOM elements
         const datetimeElement = document.getElementById('datetime');
         const subjectContainer = document.getElementById('subjectContainer');
+        const priorityContainer = document.getElementById('priorityContainer');
+        const priorityItems = document.getElementById('priorityItems');
         const emptyState = document.getElementById('emptyState');
         const emptyStateBtn = document.getElementById('emptyStateBtn');
         const addSubjectBtn = document.getElementById('addSubjectBtn');
@@ -705,6 +735,7 @@
             addSubjectBtn.style.display = 'none';
             subjectContainer.innerHTML = '';
             subjectContainer.appendChild(emptyState);
+            priorityContainer.style.display = 'none';
         }
         
         // Hide empty state
@@ -742,7 +773,7 @@
             return subject.tasks.every(task => task.progress === 100);
         }
         
-        // Render subjects and tasks
+        // Render subjects and tasks with priority copies
         function renderSubjects() {
             if (subjects.length === 0) {
                 showEmptyState();
@@ -751,13 +782,38 @@
             
             hideEmptyState();
             subjectContainer.innerHTML = '';
+            priorityItems.innerHTML = '';
             
+            // Check if we have any priority items
+            let hasPriorityItems = false;
+            
+            // First pass to collect and render priority items
+            subjects.forEach(subject => {
+                // Render priority subject copy if applicable
+                if (subject.priority) {
+                    hasPriorityItems = true;
+                    renderPrioritySubjectCopy(subject);
+                }
+                
+                // Render priority task copies
+                subject.tasks.forEach(task => {
+                    if (task.priority) {
+                        hasPriorityItems = true;
+                        renderPriorityTaskCopy(subject, task);
+                    }
+                });
+            });
+            
+            // Show/hide priority section
+            priorityContainer.style.display = hasPriorityItems ? 'block' : 'none';
+            
+            // Second pass to render all subjects normally
             subjects.forEach(subject => {
                 const subjectProgress = calculateSubjectProgress(subject);
                 const isCompleted = isSubjectCompleted(subject);
                 
                 const subjectCard = document.createElement('div');
-                subjectCard.className = `subject-card ${isCompleted ? 'completed' : ''}`;
+                subjectCard.className = `subject-card ${isCompleted ? 'completed' : ''} ${subject.priority ? 'priority' : ''}`;
                 subjectCard.innerHTML = `
                     <div class="subject-header">
                         <div class="subject-title-container">
@@ -784,7 +840,7 @@
                     subject.tasks.forEach(task => {
                         const dueDate = task.due ? new Date(task.due) : null;
                         const taskItem = document.createElement('div');
-                        taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''}`;
+                        taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''} ${task.priority ? 'priority' : ''}`;
                         taskItem.innerHTML = `
                             <span class="priority-star ${task.priority ? 'active' : ''}" data-subject-id="${subject.id}" data-task-id="${task.id}">★</span>
                             <input type="checkbox" class="task-checkbox" ${task.progress === 100 ? 'checked' : ''} data-subject-id="${subject.id}" data-task-id="${task.id}">
@@ -826,6 +882,7 @@
                         task.progress = this.checked ? 100 : 0;
                     });
                     
+                    saveData();
                     renderSubjects();
                 });
                 
@@ -838,8 +895,8 @@
                     subject.priority = !subject.priority;
                     this.classList.toggle('active');
                     
-                    // Save to localStorage
-                    localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
+                    saveData();
+                    renderSubjects();
                 });
             });
             
@@ -855,8 +912,8 @@
                     task.priority = !task.priority;
                     this.classList.toggle('active');
                     
-                    // Save to localStorage
-                    localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
+                    saveData();
+                    renderSubjects();
                 });
             });
             
@@ -899,12 +956,74 @@
                     const task = subject.tasks.find(t => t.id === taskId);
                     
                     task.progress = this.checked ? 100 : 0;
+                    saveData();
                     renderSubjects();
                 });
             });
+        }
+
+        // Render a priority task COPY in the priority section
+        function renderPriorityTaskCopy(subject, task) {
+            const dueDate = task.due ? new Date(task.due) : null;
+            const taskItem = document.createElement('div');
+            taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''} priority`;
+            taskItem.innerHTML = `
+                <span class="priority-star active" data-subject-id="${subject.id}" data-task-id="${task.id}">★</span>
+                <input type="checkbox" class="task-checkbox" ${task.progress === 100 ? 'checked' : ''} data-subject-id="${subject.id}" data-task-id="${task.id}">
+                <div class="task-info">
+                    <div class="task-name">${task.name} <small>(${subject.name})</small></div>
+                    ${dueDate ? `<div class="task-due">Due: ${dueDate.toLocaleString()}</div>` : ''}
+                </div>
+                <div class="task-actions">
+                    <div class="progress-circle-small" data-subject-id="${subject.id}" data-task-id="${task.id}" style="background: conic-gradient(var(--pastel-green) ${task.progress}%, var(--soft-gray) ${task.progress}%">
+                        ${task.progress}%
+                    </div>
+                    <button class="timer-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Timer</button>
+                    ${task.progress === 100 ? `<button class="delete-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Delete</button>` : ''}
+                </div>
+            `;
+            priorityItems.appendChild(taskItem);
+        }
+        
+        // Render a priority subject COPY in the priority section
+        function renderPrioritySubjectCopy(subject) {
+            const subjectCard = document.createElement('div');
+            subjectCard.className = `subject-card priority`;
+            subjectCard.innerHTML = `
+                <div class="subject-header">
+                    <div class="subject-title-container">
+                        <span class="subject-priority-star active" data-subject-id="${subject.id}">★</span>
+                        <div class="subject-title">${subject.name}</div>
+                    </div>
+                </div>
+                <div class="task-list" id="priority-tasks-${subject.id}"></div>
+            `;
+            priorityItems.appendChild(subjectCard);
             
-            // Save to localStorage
-            localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
+            const taskList = document.getElementById(`priority-tasks-${subject.id}`);
+            
+            // Only show priority tasks in the priority section copy
+            subject.tasks.filter(task => task.priority).forEach(task => {
+                const dueDate = task.due ? new Date(task.due) : null;
+                const taskItem = document.createElement('div');
+                taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''}`;
+                taskItem.innerHTML = `
+                    <span class="priority-star active" data-subject-id="${subject.id}" data-task-id="${task.id}">★</span>
+                    <input type="checkbox" class="task-checkbox" ${task.progress === 100 ? 'checked' : ''} data-subject-id="${subject.id}" data-task-id="${task.id}">
+                    <div class="task-info">
+                        <div class="task-name">${task.name}</div>
+                        ${dueDate ? `<div class="task-due">Due: ${dueDate.toLocaleString()}</div>` : ''}
+                    </div>
+                    <div class="task-actions">
+                        <div class="progress-circle-small" data-subject-id="${subject.id}" data-task-id="${task.id}" style="background: conic-gradient(var(--pastel-green) ${task.progress}%, var(--soft-gray) ${task.progress}%">
+                            ${task.progress}%
+                        </div>
+                        <button class="timer-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Timer</button>
+                        ${task.progress === 100 ? `<button class="delete-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Delete</button>` : ''}
+                    </div>
+                `;
+                taskList.appendChild(taskItem);
+            });
         }
         
         // Delete a task
@@ -913,6 +1032,7 @@
                 const subject = subjects.find(s => s.id === subjectId);
                 // Only remove the task, keep the subject
                 subject.tasks = subject.tasks.filter(t => t.id !== taskId);
+                saveData();
                 renderSubjects();
             }
         }
@@ -921,8 +1041,14 @@
         function deleteSubject(subjectId) {
             if (confirm("Are you sure you want to delete this subject and all its tasks?")) {
                 subjects = subjects.filter(s => s.id !== subjectId);
+                saveData();
                 renderSubjects();
             }
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
         }
         
         // Modal functions
@@ -1016,7 +1142,7 @@
             progressCircle.style.background = `conic-gradient(var(--pastel-green) ${progress}%, var(--soft-gray) ${progress}%`;
             progressCircle.textContent = `${progress}%`;
             
-            // Update the progress in the main view
+            saveData();
             renderSubjects();
         }
         
@@ -1032,12 +1158,13 @@
             const newSubject = {
                 id: subjects.length > 0 ? Math.max(...subjects.map(s => s.id)) + 1 : 1,
                 name: name,
-                tasks: [], // Start with empty tasks array
-                priority: false // Default to not prioritized
+                tasks: [],
+                priority: false
             };
             
             subjects.push(newSubject);
             closeSubjectModal();
+            saveData();
             renderSubjects();
         }
         
@@ -1055,13 +1182,14 @@
             const newTask = {
                 id: subject.tasks.length > 0 ? Math.max(...subject.tasks.map(t => t.id)) + 1 : 1,
                 name: name,
-                due: due || null, // Due date is optional
+                due: due || null,
                 progress: 0,
-                priority: false // Default to not prioritized
+                priority: false
             };
             
             subject.tasks.push(newTask);
             closeTaskModal();
+            saveData();
             renderSubjects();
         }
         
