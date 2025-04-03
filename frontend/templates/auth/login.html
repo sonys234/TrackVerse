@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackVerse | Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-blue: #a2d2ff;
+            --pastel-purple: #cdb4db;
+            --pastel-pink: #ffc8dd;
+            --pastel-green: #bde0fe;
+            --pastel-yellow: #ffea00;
+            --text-dark: #5a5a5a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', cursive, sans-serif;
+        }
+        
+        body {
+            background-color: var(--pastel-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle, var(--pastel-blue) 0%, var(--pastel-green) 100%);
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 380px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .login-header {
+            background: var(--pastel-purple);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .login-header::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: var(--pastel-purple);
+            transform: skewY(-3deg);
+            z-index: -1;
+        }
+        
+        .login-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        .login-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .login-form {
+            padding: 30px;
+            background: white;
+        }
+        
+        .auth-method-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--pastel-blue);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--text-dark);
+            transition: all 0.3s;
+        }
+        
+        .auth-tab.active {
+            color: var(--pastel-purple);
+            border-bottom: 3px solid var(--pastel-purple);
+            margin-bottom: -2px;
+        }
+        
+        .auth-content {
+            display: none;
+        }
+        
+        .auth-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 3px solid var(--pastel-blue);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+        
+        .pin-inputs {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .pin-inputs input {
+            text-align: center;
+            font-size: 24px;
+            height: 60px;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--pastel-pink);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 200, 221, 0.4);
+            background-color: white;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            margin-right: 8px;
+            accent-color: var(--pastel-purple);
+        }
+        
+        .forgot-password a {
+            color: var(--pastel-purple);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background: var(--pastel-purple);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .login-button:hover {
+            background: var(--pastel-pink);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+        }
+        
+        .login-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        .signup-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+        
+        .signup-link a {
+            color: var(--pastel-purple);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        
+        .trackverse-icon {
+            display: block;
+            margin: 0 auto 15px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--pastel-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--pastel-purple);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="trackverse-icon">TV</div>
+            <h1>Welcome to TrackVerse</h1>
+            <p>Log in to manage your tracking analytics</p>
+        </div>
+        
+        <div class="login-form">
+            <div class="auth-method-tabs">
+                <div class="auth-tab active" data-tab="username">Username</div>
+                <div class="auth-tab" data-tab="pin">PIN</div>
+            </div>
+            
+            <div class="auth-content active" id="username-tab">
+                <form action="/login" method="POST">
+                    <input type="hidden" name="auth_method" value="username">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    
+                    <div class="remember-forgot">
+                        <div class="remember-me">
+                            <input type="checkbox" id="remember" name="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                        <div class="forgot-password">
+                            <a href="/forgot-password">Forgot password?</a>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="login-button">Let's Go!</button>
+                </form>
+            </div>
+            
+            <div class="auth-content" id="pin-tab">
+                <form action="/login" method="POST">
+                    <input type="hidden" name="auth_method" value="pin">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="pin">6-digit PIN</label>
+                        <div class="pin-inputs">
+                            <input type="text" id="pin1" name="pin1" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" id="pin2" name="pin2" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" id="pin3" name="pin3" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" id="pin4" name="pin4" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" id="pin5" name="pin5" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                            <input type="text" id="pin6" name="pin6" maxlength="1" pattern="[0-9]" inputmode="numeric" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="login-button">Login with PIN</button>
+                </form>
+            </div>
+            
+            <div class="signup-link">
+                Don't have an account? <a href="/signup">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.auth-tab, .auth-content').forEach(el => {
+                    el.classList.remove('active');
+                });
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+        
+        // PIN input auto-focus
+        const pinInputs = document.querySelectorAll('.pin-inputs input');
+        pinInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < pinInputs.length - 1) {
+                    pinInputs[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                    pinInputs[index - 1].focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

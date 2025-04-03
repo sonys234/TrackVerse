@@ -3,187 +3,356 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diet Tracker</title>
+    <title>YumTrack - Diet Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #A5D6A7; /* Light Green */
+            font-family: 'Comic Neue', cursive;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 0;
+            color: #5a5a5a;
         }
+
+        /* Top Bar */
+        .top-bar {
+            background-color: #b5ead7; /* Pastel mint */
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tracker-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #5a5a5a;
+        }
+
+        .datetime {
+            font-size: 18px;
+        }
+
+        /* Main Container */
         .container {
-            width: 50%;
+            max-width: 1000px;
             margin: 20px auto;
-            background: rgb(131, 255, 143);
             padding: 20px;
-            box-shadow: 0px 0px 10px rgb(195, 196, 195);
-            border-radius: 8px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        input, button {
-            margin: 5px;
-            padding: 10px;
-            width: 80%;
+
+        h1, h2, h3 {
+            color: #ff9aa2; /* Pastel pink */
         }
-        button {
-            cursor: pointer;
-            background-color: #388E3C; /* Medium Green */
-            color: white;
+
+        /* Buttons */
+        .btn {
+            background-color: #ffdac1; /* Pastel peach */
             border: none;
-            border-radius: 5px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s;
         }
-        button:hover {
-            background-color: #2C6B2F; /* Darker Green */
+
+        .btn:hover {
+            background-color: #e2f0cb; /* Pastel green */
+            transform: scale(1.05);
         }
-        .reset-btn {
-            background-color: #D32F2F; /* Red */
-        }
-        .reset-btn:hover {
-            background-color: #B71C1C;
-        }
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-        th, td {
+
+        /* Forms & Inputs */
+        input, select {
             padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+            border: 2px solid #b5ead7;
+            border-radius: 10px;
+            font-family: 'Comic Neue', cursive;
+            margin: 5px;
         }
-        th {
-            background-color: #388E3C; /* Medium Green */
-            color: white;
+
+        /* Food Log */
+        .meal-section {
+            background-color: #c7ceea; /* Pastel lavender */
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
         }
-        .done {
-            text-decoration: line-through;
-            color: gray;
+
+        .food-entry {
+            background-color: #fff;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Water Tracker */
+        .water-tracker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .water-glass {
+            width: 30px;
+            height: 40px;
+            background-color: #a2e1f6; /* Pastel blue */
+            border-radius: 0 0 10px 10px;
+            cursor: pointer;
+        }
+
+        /* Charts */
+        .chart-container {
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="tracker-name">🍏 YumTrack</div>
+        <div class="datetime" id="datetime"></div>
+    </div>
 
+    <!-- Main Content -->
     <div class="container">
-        <h2>Diet Tracker</h2>
+        <!-- User Profile -->
+        <section>
+            <h1>My Profile</h1>
+            <div>
+                <input type="number" id="age" placeholder="Age">
+                <input type="number" id="weight" placeholder="Weight (kg)">
+                <input type="number" id="height" placeholder="Height (cm)">
+                <select id="goal">
+                    <option value="weight_loss">Weight Loss</option>
+                    <option value="maintenance">Maintenance</option>
+                    <option value="muscle_gain">Muscle Gain</option>
+                </select>
+                <button class="btn" onclick="setGoals()">Calculate Goals</button>
+            </div>
+            <div id="calorie-goal" style="margin-top: 10px;"></div>
+        </section>
 
-        <label for="breakfast">Breakfast:</label>
-        <input type="text" id="breakfast" placeholder="Enter breakfast">
-        
-        <label for="lunch">Lunch:</label>
-        <input type="text" id="lunch" placeholder="Enter lunch">
-        
-        <label for="dinner">Dinner:</label>
-        <input type="text" id="dinner" placeholder="Enter dinner">
+        <!-- Food Logging -->
+        <section>
+            <h1>Log Food</h1>
+            <div>
+                <select id="meal-type">
+                    <option value="breakfast">Breakfast</option>
+                    <option value="lunch">Lunch</option>
+                    <option value="dinner">Dinner</option>
+                    <option value="snack">Snack</option>
+                </select>
+                <input type="text" id="food-name" placeholder="Food name">
+                <input type="number" id="food-calories" placeholder="Calories">
+                <input type="number" id="food-carbs" placeholder="Carbs (g)">
+                <input type="number" id="food-protein" placeholder="Protein (g)">
+                <input type="number" id="food-fat" placeholder="Fat (g)">
+                <button class="btn" onclick="addFood()">Add Food</button>
+            </div>
+        </section>
 
-        <button onclick="addMeals()">Enter</button>
-        <button class="reset-btn" onclick="resetTracker()">Reset</button>
+        <!-- Meal Sections -->
+        <section>
+            <h1>Today's Meals</h1>
+            <div id="breakfast" class="meal-section">
+                <h2>🍳 Breakfast</h2>
+            </div>
+            <div id="lunch" class="meal-section">
+                <h2>🍔 Lunch</h2>
+            </div>
+            <div id="dinner" class="meal-section">
+                <h2>🍲 Dinner</h2>
+            </div>
+            <div id="snacks" class="meal-section">
+                <h2>🍪 Snacks</h2>
+            </div>
+        </section>
 
-        <h3>Meal Log</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Done</th>
-                    <th>Meal</th>
-                    <th>Food</th>
-                </tr>
-            </thead>
-            <tbody id="mealList"></tbody>
-        </table>
+        <!-- Water Tracker -->
+        <section>
+            <h1>Water Intake</h1>
+            <div class="water-tracker">
+                <div id="water-glasses"></div>
+                <span id="water-count">0/8 glasses</span>
+            </div>
+        </section>
 
-        <h3>Additional Tasks</h3>
-        <input type="text" id="task" placeholder="Add a task">
-        <button onclick="addTask()">Add Task</button>
+        <!-- Nutrition Summary -->
+        <section>
+            <h1>Nutrition Summary</h1>
+            <div>
+                <h3>Calories: <span id="total-calories">0</span>/<span id="target-calories">2000</span> kcal</h3>
+                <h3>Carbs: <span id="total-carbs">0</span>/<span id="target-carbs">250</span>g</h3>
+                <h3>Protein: <span id="total-protein">0</span>/<span id="target-protein">150</span>g</h3>
+                <h3>Fat: <span id="total-fat">0</span>/<span id="target-fat">65</span>g</h3>
+            </div>
+        </section>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Done</th>
-                    <th>Task</th>
-                </tr>
-            </thead>
-            <tbody id="taskList"></tbody>
-        </table>
+        <!-- Charts -->
+        <section>
+            <h1>Progress</h1>
+            <div class="chart-container">
+                <canvas id="caloriesChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="macrosChart"></canvas>
+            </div>
+        </section>
     </div>
 
     <script>
-        function addMeals() {
-            let breakfast = document.getElementById("breakfast").value.trim();
-            let lunch = document.getElementById("lunch").value.trim();
-            let dinner = document.getElementById("dinner").value.trim();
+        // Update Date & Time
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            document.getElementById('datetime').textContent = now.toLocaleDateString('en-US', options);
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
 
-            if (breakfast || lunch || dinner) {
-                let mealList = document.getElementById("mealList");
+        // Diet Tracker Logic
+        let totalCalories = 0;
+        let totalCarbs = 0;
+        let totalProtein = 0;
+        let totalFat = 0;
+        let waterIntake = 0;
 
-                if (breakfast) {
-                    let row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td><input type="checkbox" onclick="toggleDone(this)"></td>
-                        <td><b>Breakfast</b></td>
-                        <td>${breakfast}</td>
-                    `;
-                    mealList.appendChild(row);
-                }
-
-                if (lunch) {
-                    let row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td><input type="checkbox" onclick="toggleDone(this)"></td>
-                        <td><b>Lunch</b></td>
-                        <td>${lunch}</td>
-                    `;
-                    mealList.appendChild(row);
-                }
-
-                if (dinner) {
-                    let row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td><input type="checkbox" onclick="toggleDone(this)"></td>
-                        <td><b>Dinner</b></td>
-                        <td>${dinner}</td>
-                    `;
-                    mealList.appendChild(row);
-                }
-
-                document.getElementById("breakfast").value = "";
-                document.getElementById("lunch").value = "";
-                document.getElementById("dinner").value = "";
+        // Initialize Water Glasses
+        function initWaterTracker() {
+            const waterContainer = document.getElementById('water-glasses');
+            waterContainer.innerHTML = '';
+            for (let i = 0; i < 8; i++) {
+                const glass = document.createElement('div');
+                glass.className = 'water-glass';
+                glass.onclick = () => logWater(i + 1);
+                waterContainer.appendChild(glass);
             }
         }
 
-        function addTask() {
-            let taskInput = document.getElementById("task");
-            let taskText = taskInput.value.trim();
+        function logWater(glasses) {
+            waterIntake = glasses;
+            document.getElementById('water-count').textContent = `${waterIntake}/8 glasses`;
+            const waterGlasses = document.querySelectorAll('.water-glass');
+            waterGlasses.forEach((glass, index) => {
+                glass.style.backgroundColor = index < glasses ? '#a2e1f6' : '#e0e0e0';
+            });
+        }
 
-            if (taskText !== "") {
-                let taskList = document.getElementById("taskList");
-                let row = document.createElement("tr");
+        // Set Calorie & Macro Goals
+        function setGoals() {
+            const age = parseInt(document.getElementById('age').value);
+            const weight = parseInt(document.getElementById('weight').value);
+            const height = parseInt(document.getElementById('height').value);
+            const goal = document.getElementById('goal').value;
 
-                row.innerHTML = `
-                    <td><input type="checkbox" onclick="toggleDone(this)"></td>
-                    <td>${taskText}</td>
+            let calorieGoal = 2000;
+            if (goal === 'weight_loss') calorieGoal = 1800;
+            else if (goal === 'muscle_gain') calorieGoal = 2500;
+
+            document.getElementById('target-calories').textContent = calorieGoal;
+            document.getElementById('target-carbs').textContent = Math.round(calorieGoal * 0.5 / 4);
+            document.getElementById('target-protein').textContent = Math.round(calorieGoal * 0.3 / 4);
+            document.getElementById('target-fat').textContent = Math.round(calorieGoal * 0.2 / 9);
+
+            document.getElementById('calorie-goal').innerHTML = `
+                <h3>Daily Goals: ${calorieGoal} kcal | Carbs: ${Math.round(calorieGoal * 0.5 / 4)}g | Protein: ${Math.round(calorieGoal * 0.3 / 4)}g | Fat: ${Math.round(calorieGoal * 0.2 / 9)}g</h3>
+            `;
+        }
+
+        // Add Food
+        function addFood() {
+            const mealType = document.getElementById('meal-type').value;
+            const foodName = document.getElementById('food-name').value;
+            const calories = parseInt(document.getElementById('food-calories').value);
+            const carbs = parseInt(document.getElementById('food-carbs').value);
+            const protein = parseInt(document.getElementById('food-protein').value);
+            const fat = parseInt(document.getElementById('food-fat').value);
+
+            if (foodName && !isNaN(calories) && !isNaN(carbs) && !isNaN(protein) && !isNaN(fat)) {
+                totalCalories += calories;
+                totalCarbs += carbs;
+                totalProtein += protein;
+                totalFat += fat;
+
+                document.getElementById('total-calories').textContent = totalCalories;
+                document.getElementById('total-carbs').textContent = totalCarbs;
+                document.getElementById('total-protein').textContent = totalProtein;
+                document.getElementById('total-fat').textContent = totalFat;
+
+                const mealSection = document.getElementById(mealType);
+                const foodEntry = document.createElement('div');
+                foodEntry.className = 'food-entry';
+                foodEntry.innerHTML = `
+                    <span>${foodName}</span>
+                    <span>${calories} kcal | C:${carbs}g P:${protein}g F:${fat}g</span>
                 `;
+                mealSection.appendChild(foodEntry);
 
-                taskList.appendChild(row);
-                taskInput.value = "";
+                // Clear inputs
+                document.getElementById('food-name').value = '';
+                document.getElementById('food-calories').value = '';
+                document.getElementById('food-carbs').value = '';
+                document.getElementById('food-protein').value = '';
+                document.getElementById('food-fat').value = '';
+
+                updateCharts();
             }
         }
 
-        function toggleDone(checkbox) {
-            let row = checkbox.parentNode.parentNode;
-            if (checkbox.checked) {
-                row.classList.add("done");
-            } else {
-                row.classList.remove("done");
-            }
+        // Charts
+        let caloriesChart, macrosChart;
+
+        function updateCharts() {
+            // Calories Chart
+            if (caloriesChart) caloriesChart.destroy();
+            const caloriesCtx = document.getElementById('caloriesChart').getContext('2d');
+            caloriesChart = new Chart(caloriesCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Calories'],
+                    datasets: [{
+                        label: 'Consumed',
+                        data: [totalCalories],
+                        backgroundColor: '#ffb7b2',
+                    }, {
+                        label: 'Target',
+                        data: [parseInt(document.getElementById('target-calories').textContent)],
+                        backgroundColor: '#b5ead7',
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Macros Chart
+            if (macrosChart) macrosChart.destroy();
+            const macrosCtx = document.getElementById('macrosChart').getContext('2d');
+            macrosChart = new Chart(macrosCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Carbs', 'Protein', 'Fat'],
+                    datasets: [{
+                        data: [totalCarbs, totalProtein, totalFat],
+                        backgroundColor: ['#ffdac1', '#c7ceea', '#e2f0cb'],
+                    }]
+                }
+            });
         }
 
-        function resetTracker() {
-            document.getElementById("mealList").innerHTML = "";
-            document.getElementById("taskList").innerHTML = "";
-            document.getElementById("breakfast").value = "";
-            document.getElementById("lunch").value = "";
-            document.getElementById("dinner").value = "";
-            document.getElementById("task").value = "";
-        }
+        // Initialize
+        initWaterTracker();
+        setGoals(); // Default goals
     </script>
-
 </body>
 </html>

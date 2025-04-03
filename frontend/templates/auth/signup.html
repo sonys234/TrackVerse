@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrackVerse | Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pastel-blue: #a2d2ff;
+            --pastel-purple: #cdb4db;
+            --pastel-pink: #ffc8dd;
+            --pastel-green: #bde0fe;
+            --pastel-yellow: #ffea00;
+            --text-dark: #5a5a5a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', cursive, sans-serif;
+        }
+        
+        body {
+            background-color: var(--pastel-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: radial-gradient(circle, var(--pastel-blue) 0%, var(--pastel-green) 100%);
+        }
+        
+        .signup-container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .signup-header {
+            background: var(--pastel-pink);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .signup-header::after {
+            content: "";
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: var(--pastel-pink);
+            transform: skewY(-3deg);
+            z-index: -1;
+        }
+        
+        .signup-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        .signup-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .signup-form {
+            padding: 30px;
+            background: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            color: var(--text-dark);
+            font-size: 16px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 3px solid var(--pastel-blue);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+        
+        .pin-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .pin-option input {
+            margin-right: 10px;
+            width: auto;
+        }
+        
+        .pin-inputs {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .pin-inputs input {
+            text-align: center;
+            font-size: 24px;
+            height: 60px;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--pastel-purple);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(205, 180, 219, 0.4);
+            background-color: white;
+        }
+        
+        .password-rules {
+            font-size: 13px;
+            color: var(--text-dark);
+            margin-top: 5px;
+            padding-left: 10px;
+        }
+        
+        .password-rules ul {
+            list-style-type: none;
+            margin-top: 5px;
+        }
+        
+        .password-rules li::before {
+            content: "• ";
+            color: var(--pastel-purple);
+            font-weight: bold;
+        }
+        
+        .signup-button {
+            width: 100%;
+            padding: 15px;
+            background: var(--pastel-pink);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+        
+        .signup-button:hover {
+            background: var(--pastel-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+        }
+        
+        .signup-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 15px;
+            color: var(--text-dark);
+        }
+        
+        .login-link a {
+            color: var(--pastel-purple);
+            text-decoration: none;
+            font-weight: 700;
+        }
+        
+        .trackverse-icon {
+            display: block;
+            margin: 0 auto 15px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--pastel-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--pastel-purple);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .name-fields {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .name-fields .form-group {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <div class="trackverse-icon">TV</div>
+            <h1>Join TrackVerse</h1>
+            <p>Start your tracking journey today</p>
+        </div>
+        
+        <div class="signup-form">
+            <form action="/signup" method="POST">
+                <div class="name-fields">
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" name="first_name" placeholder="First name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" name="last_name" placeholder="Last name" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required>
+                    <div class="password-rules">
+                        <p>Your password should:</p>
+                        <ul>
+                            <li>Be at least 8 characters</li>
+                            <li>Contain a number</li>
+                            <li>Have one special character</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+                </div>
+                
+                <div class="pin-option">
+                    <input type="checkbox" id="enable-pin" name="enable_pin">
+                    <label for="enable-pin">Enable PIN login (6 digits)</label>
+                </div>
+                
+                <div id="pin-section" style="display: none;">
+                    <div class="form-group">
+                        <label for="pin">Set your 6-digit PIN</label>
+                        <div class="pin-inputs">
+                            <input type="text" id="pin1" name="pin1" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                            <input type="text" id="pin2" name="pin2" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                            <input type="text" id="pin3" name="pin3" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                            <input type="text" id="pin4" name="pin4" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                            <input type="text" id="pin5" name="pin5" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                            <input type="text" id="pin6" name="pin6" maxlength="1" pattern="[0-9]" inputmode="numeric">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="signup-button">Create Account</button>
+            </form>
+            
+            <div class="login-link">
+                Already have an account? <a href="/login">Log in here</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle PIN section visibility
+        document.getElementById('enable-pin').addEventListener('change', function() {
+            const pinSection = document.getElementById('pin-section');
+            const pinInputs = document.querySelectorAll('.pin-inputs input');
+            
+            if (this.checked) {
+                pinSection.style.display = 'block';
+                pinInputs.forEach(input => input.required = true);
+            } else {
+                pinSection.style.display = 'none';
+                pinInputs.forEach(input => input.required = false);
+            }
+        });
+        
+        // PIN input auto-focus
+        const pinInputs = document.querySelectorAll('.pin-inputs input');
+        pinInputs.forEach((input, index) => {
+            input.addEventListener('input', () => {
+                if (input.value.length === 1 && index < pinInputs.length - 1) {
+                    pinInputs[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                    pinInputs[index - 1].focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -3,141 +3,854 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Self-Care Tracker</title>
+    <title>Self-Care To-Do List</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        
+        :root {
+            --primary: #B5EAD7;
+            --secondary: #FFDAC1;
+            --accent: #C7CEEA;
+            --light: #F8F9FA;
+            --gray: #E2F0CB;
+            --dark-gray: #95a5a6;
+            --text: #333;
+            --completed: #E2F0CB;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Neue', cursive;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            background-color: #E6E6FA;
-            text-align: center;
-            color: #4B0082;
+            background-color: var(--light);
+            color: var(--text);
         }
-        .container {
-            width: 50%;
-            margin: 20px auto;
-            background: #D8BFD8;
-            padding: 20px;
-            box-shadow: 0px 0px 10px #9370DB;
-            border-radius: 8px;
+        
+        .top-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--accent);
+            color: var(--text);
+            position: relative;
         }
-        input, button, select, textarea {
-            margin: 5px;
-            padding: 10px;
-            width: 80%;
-            border: 1px solid #9370DB;
-            border-radius: 5px;
-            background: #F8F0FF;
-            color: #4B0082;
-        }
-        button {
-            cursor: pointer;
-            background-color: #8A2BE2;
-            color: white;
-            border: none;
-            border-radius: 5px;
-        }
-        button:hover {
-            background-color: #6A0DAD;
-        }
-        .reset-btn {
-            background-color: #9932CC;
-        }
-        .reset-btn:hover {
-            background-color: #800080;
-        }
-        .delete-btn {
-            background-color: #BA55D3;
-            padding: 5px;
-            font-size: 12px;
-            margin-left: 5px;
-            border-radius: 3px;
-        }
-        .journal-entry {
-            background-color: #EEE6FF;
-            padding: 10px;
-            margin: 10px auto;
-            border-radius: 8px;
-            box-shadow: 2px 2px 10px #9370DB;
-            width: 90%;
-            text-align: left;
-        }
-        .journal-date {
+        
+        .logo {
+            font-size: 24px;
             font-weight: bold;
-            color: #8A2BE2;
+            position: absolute;
+            left: 30px;
         }
-        .journal-text {
-            margin-top: 5px;
+        
+        .main-content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        .delete-journal {
-            background-color: #9932CC;
-            color: white;
+        
+        .tracker-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .tracker-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--gray);
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: var(--light);
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .btn {
+            padding: 10px 20px;
             border: none;
-            padding: 5px;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
         }
-        .delete-journal:hover {
-            background-color: #800080;
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--text);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .mood-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 3px;
+            background-color: var(--secondary);
+        }
+        
+        .mood-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .todo-list {
+            margin-top: 15px;
+        }
+        
+        .todo-item {
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: white;
+            border-radius: 6px;
+            position: relative;
+            border: 1px solid var(--gray);
+            transition: all 0.3s ease;
+        }
+        
+        .todo-item.completed {
+            background-color: var(--completed);
+            border-color: var(--completed);
+        }
+        
+        .todo-main {
+            display: flex;
+            align-items: center;
+        }
+        
+        .todo-text {
+            flex-grow: 1;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        
+        .todo-complete {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .todo-details {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: var(--dark-gray);
+            padding-left: 30px;
+        }
+        
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #E74C3C;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 5px;
+        }
+        
+        .log-container {
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: var(--gray);
+            border-radius: 8px;
+        }
+        
+        .log-entry {
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .log-entry .log-notes {
+            margin-top: 5px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        .subtask-form {
+            display: flex;
+            margin-top: 10px;
+            gap: 5px;
+        }
+        
+        .subtask-input {
+            flex-grow: 1;
+            padding: 5px;
+            border: 1px solid var(--gray);
+            border-radius: 4px;
+            background-color: var(--light);
+        }
+        
+        .subtasks-list {
+            margin-top: 5px;
+            padding-left: 20px;
+        }
+        
+        .subtask-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        
+        .subtask-item input[type="checkbox"] {
+            margin-right: 5px;
+        }
+        
+        .subtask-text {
+            flex-grow: 1;
+        }
+        
+        .subtask-complete {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        /* Progress Circle Styles */
+        .progress-container {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        
+        .progress-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary) 0%, var(--light) 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-circle.enlarged {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            font-size: 24px;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 99;
+        }
+        
+        /* Timer Styles */
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--secondary);
+            border-radius: 10px;
+        }
+        
+        .timer-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin: 10px 0;
+            color: var(--text);
+        }
+        
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .timer-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--primary);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .timer-input {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .timer-input input {
+            width: 60px;
+            padding: 5px;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid var(--gray);
+        }
+        
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .timer-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .timer-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>🌿 Self-Care Tracker</h2>
-        <h3>📝 Self-Care Journal</h3>
-        <input type="date" id="journalDate">
-        <textarea id="journal" placeholder="Write your thoughts..."></textarea>
-        <button onclick="saveJournal()">Save Entry</button>
-        <h3>📖 Your Journal Entries</h3>
-        <div id="journalEntries"></div>
-        <button class="reset-btn" onclick="resetTracker()">Reset All</button>
+    <div class="top-bar">
+        <div class="logo">🌿 Self-Care</div>
+        <div id="date">Today</div>
     </div>
+    
+    <div class="main-content">
+        <!-- Mood Tracker -->
+        <div class="tracker-card">
+            <div class="tracker-header">
+                <div class="tracker-title">😊 Mood Tracker</div>
+            </div>
+            <div class="form-group">
+                <label>How are you feeling?</label>
+                <div>
+                    <button class="mood-btn" onclick="setMood('angry')">😠 Angry</button>
+                    <button class="mood-btn" onclick="setMood('sad')">😢 Sad</button>
+                    <button class="mood-btn" onclick="setMood('neutral')">😐 Neutral</button>
+                    <button class="mood-btn" onclick="setMood('happy')">😊 Happy</button>
+                    <button class="mood-btn" onclick="setMood('excited')">😆 Excited</button>
+                </div>
+            </div>
+            <div id="currentMood" style="margin: 10px 0; font-weight: bold;"></div>
+            
+            <div class="form-group">
+                <label for="moodNotes">Add notes about your mood (optional):</label>
+                <textarea id="moodNotes" placeholder="Why are you feeling this way? Any thoughts you want to remember?"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="saveMoodWithNotes()">Save Mood Entry</button>
+            
+            <div class="log-container" id="moodLog"></div>
+        </div>
+        
+        <!-- Timer Section -->
+        <div class="tracker-card">
+            <div class="tracker-header">
+                <div class="tracker-title">⏱️ Self-Care Timer</div>
+            </div>
+            <div class="timer-container">
+                <div class="timer-input">
+                    <input type="number" id="minutes" min="0" max="120" value="15" placeholder="Min">
+                    <span>:</span>
+                    <input type="number" id="seconds" min="0" max="59" value="0" placeholder="Sec">
+                </div>
+                <div class="timer-display" id="timerDisplay">15:00</div>
+                <div class="timer-controls">
+                    <button class="timer-btn" id="startTimer">Start</button>
+                    <button class="timer-btn" id="pauseTimer">Pause</button>
+                    <button class="timer-btn" id="resetTimer">Reset</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Self-Care To-Do List -->
+        <div class="tracker-card">
+            <div class="tracker-header">
+                <div class="tracker-title">✅ Self-Care Tasks</div>
+            </div>
+            <div class="form-group">
+                <label for="newTask">Task:</label>
+                <input type="text" id="newTask" placeholder="e.g., Meditate for 10 minutes">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="taskDate">Due Date:</label>
+                    <input type="date" id="taskDate">
+                </div>
+                <div class="form-group">
+                    <label for="taskTime">Due Time:</label>
+                    <input type="time" id="taskTime">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="addTask()">Add Task</button>
+            <div class="todo-list" id="taskList"></div>
+        </div>
+    </div>
+
+    <div class="overlay" id="progressOverlay"></div>
+
     <script>
-        document.addEventListener("DOMContentLoaded", loadData);
-        function saveJournal() {
-            let journalDate = document.getElementById("journalDate").value;
-            let journalText = document.getElementById("journal").value.trim();
-            if (journalDate !== "" && journalText !== "") {
-                let journalList = document.getElementById("journalEntries");
-                let entryDiv = document.createElement("div");
-                entryDiv.classList.add("journal-entry");
-                entryDiv.innerHTML = `
-                    <div class="journal-date">${journalDate}</div>
-                    <div class="journal-text">${journalText}</div>
-                    <button class="delete-journal" onclick="deleteJournalEntry(this, '${journalDate}', '${journalText}')">❌ Delete</button>
-                `;
-                journalList.appendChild(entryDiv);
-                saveJournalToLocal(journalDate, journalText);
-                document.getElementById("journal").value = "";
+        // Data storage
+        let currentMood = '';
+        let moodLogs = JSON.parse(localStorage.getItem('moodLogs')) || [];
+        let tasks = JSON.parse(localStorage.getItem('selfCareTasks')) || [];
+        
+        // Timer variables
+        let timerInterval;
+        let totalSeconds = 0;
+        let isTimerRunning = false;
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            renderTasks();
+            renderMoodLogs();
+            setDefaultDates();
+            setupTimer();
+        });
+        
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('taskDate').value = today;
+        }
+        
+        function updateDate() {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = today.toLocaleDateString('en-US', options);
+        }
+        
+        function setMood(mood) {
+            currentMood = mood;
+            document.getElementById('currentMood').textContent = `Current mood: ${mood.charAt(0).toUpperCase() + mood.slice(1)}`;
+        }
+        
+        function saveMoodWithNotes() {
+            if (!currentMood) {
+                alert('Please select a mood first!');
+                return;
+            }
+            
+            const now = new Date();
+            const dateTime = now.toLocaleString();
+            const notes = document.getElementById('moodNotes').value.trim();
+            
+            moodLogs.push({
+                mood: currentMood,
+                date: dateTime,
+                notes: notes
+            });
+            
+            saveMoodLogs();
+            renderMoodLogs();
+            document.getElementById('moodNotes').value = '';
+            currentMood = '';
+            document.getElementById('currentMood').textContent = '';
+        }
+        
+        function addTask() {
+            const taskInput = document.getElementById('newTask');
+            const taskText = taskInput.value.trim();
+            const taskDate = document.getElementById('taskDate').value;
+            const taskTime = document.getElementById('taskTime').value;
+            
+            if (taskText) {
+                tasks.push({
+                    id: Date.now(),
+                    text: taskText,
+                    dueDate: taskDate,
+                    dueTime: taskTime,
+                    completed: false,
+                    progress: 0, // 0%, 25%, 50%, 75%, 100%
+                    subtasks: []
+                });
+                
+                saveTasks();
+                renderTasks();
+                taskInput.value = '';
+                document.getElementById('taskDate').value = new Date().toISOString().split('T')[0];
+                document.getElementById('taskTime').value = '';
             }
         }
-        function saveJournalToLocal(date, entry) {
-            let journals = JSON.parse(localStorage.getItem("journals")) || [];
-            journals.push({ date, entry });
-            localStorage.setItem("journals", JSON.stringify(journals));
+        
+        function toggleTask(id) {
+            tasks = tasks.map(task => {
+                if (task.id === id) {
+                    const newCompleted = !task.completed;
+                    return { 
+                        ...task, 
+                        completed: newCompleted,
+                        progress: newCompleted ? 100 : task.progress // Set to 100% if completed
+                    };
+                }
+                return task;
+            });
+            saveTasks();
+            renderTasks();
         }
-        function deleteJournalEntry(button, date, entry) {
-            let journals = JSON.parse(localStorage.getItem("journals")) || [];
-            journals = journals.filter(j => !(j.date === date && j.entry === entry));
-            localStorage.setItem("journals", JSON.stringify(journals));
-            button.parentElement.remove();
+        
+        function deleteTask(id) {
+            tasks = tasks.filter(task => task.id !== id);
+            saveTasks();
+            renderTasks();
         }
-        function loadData() {
-            let journals = JSON.parse(localStorage.getItem("journals")) || [];
-            let journalList = document.getElementById("journalEntries");
-            journals.forEach(({ date, entry }) => {
-                let entryDiv = document.createElement("div");
-                entryDiv.classList.add("journal-entry");
-                entryDiv.innerHTML = `
-                    <div class="journal-date">${date}</div>
-                    <div class="journal-text">${entry}</div>
-                    <button class="delete-journal" onclick="deleteJournalEntry(this, '${date}', '${entry}')">❌ Delete</button>
+        
+        function addSubtask(taskId, inputElement) {
+            const subtaskText = inputElement.value.trim();
+            if (subtaskText) {
+                tasks = tasks.map(task => {
+                    if (task.id === taskId) {
+                        return {
+                            ...task,
+                            subtasks: [
+                                ...task.subtasks,
+                                {
+                                    id: Date.now(),
+                                    text: subtaskText,
+                                    completed: false
+                                }
+                            ]
+                        };
+                    }
+                    return task;
+                });
+                
+                saveTasks();
+                renderTasks();
+                inputElement.value = '';
+            }
+        }
+        
+        function toggleSubtask(taskId, subtaskId) {
+            tasks = tasks.map(task => {
+                if (task.id === taskId) {
+                    return {
+                        ...task,
+                        subtasks: task.subtasks.map(subtask => 
+                            subtask.id === subtaskId 
+                                ? { ...subtask, completed: !subtask.completed } 
+                                : subtask
+                        )
+                    };
+                }
+                return task;
+            });
+            saveTasks();
+            renderTasks();
+        }
+        
+        function deleteSubtask(taskId, subtaskId) {
+            tasks = tasks.map(task => {
+                if (task.id === taskId) {
+                    return {
+                        ...task,
+                        subtasks: task.subtasks.filter(subtask => subtask.id !== subtaskId)
+                    };
+                }
+                return task;
+            });
+            saveTasks();
+            renderTasks();
+        }
+        
+        function updateTaskProgress(taskId, progress) {
+            tasks = tasks.map(task => {
+                if (task.id === taskId) {
+                    return {
+                        ...task,
+                        progress: progress,
+                        completed: progress === 100 // Mark as completed if progress is 100%
+                    };
+                }
+                return task;
+            });
+            saveTasks();
+            renderTasks();
+        }
+        
+        function showProgressOptions(taskId, progress) {
+            const overlay = document.getElementById('progressOverlay');
+            const progressCircle = document.createElement('div');
+            progressCircle.className = 'progress-circle enlarged';
+            
+            // Create progress options
+            const options = [0, 25, 50, 75, 100];
+            options.forEach(option => {
+                const optionBtn = document.createElement('div');
+                optionBtn.textContent = `${option}%`;
+                optionBtn.style.margin = '10px';
+                optionBtn.style.cursor = 'pointer';
+                optionBtn.style.padding = '10px';
+                optionBtn.style.borderRadius = '5px';
+                optionBtn.style.backgroundColor = option === progress ? 'var(--primary)' : 'var(--light)';
+                optionBtn.onclick = () => {
+                    updateTaskProgress(taskId, option);
+                    overlay.style.display = 'none';
+                    progressCircle.remove();
+                };
+                progressCircle.appendChild(optionBtn);
+            });
+            
+            overlay.style.display = 'block';
+            document.body.appendChild(progressCircle);
+            
+            // Close when clicking outside
+            overlay.onclick = () => {
+                overlay.style.display = 'none';
+                progressCircle.remove();
+            };
+        }
+        
+        function saveTasks() {
+            localStorage.setItem('selfCareTasks', JSON.stringify(tasks));
+        }
+        
+        function saveMoodLogs() {
+            localStorage.setItem('moodLogs', JSON.stringify(moodLogs));
+        }
+        
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                taskList.innerHTML = '<p>No tasks yet. Add some self-care activities!</p>';
+                return;
+            }
+            
+            // Sort tasks by due date/time (soonest first)
+            const sortedTasks = [...tasks].sort((a, b) => {
+                const dateA = a.dueDate ? new Date(a.dueDate + (a.dueTime ? ' ' + a.dueTime : '')) : new Date(0);
+                const dateB = b.dueDate ? new Date(b.dueDate + (b.dueTime ? ' ' + b.dueTime : '')) : new Date(0);
+                return dateA - dateB;
+            });
+            
+            sortedTasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = `todo-item ${task.completed ? 'completed' : ''}`;
+                
+                let dueText = '';
+                if (task.dueDate) {
+                    const dueDate = new Date(task.dueDate);
+                    dueText = dueDate.toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        year: task.dueDate.split('-')[0] !== new Date().getFullYear().toString() ? 'numeric' : undefined
+                    });
+                    
+                    if (task.dueTime) {
+                        dueText += ' at ' + task.dueTime;
+                    }
+                }
+                
+                // Render subtasks
+                let subtasksHtml = '';
+                if (task.subtasks && task.subtasks.length > 0) {
+                    subtasksHtml = '<div class="subtasks-list">';
+                    task.subtasks.forEach(subtask => {
+                        subtasksHtml += `
+                            <div class="subtask-item">
+                                <input type="checkbox" ${subtask.completed ? 'checked' : ''} 
+                                    onchange="toggleSubtask(${task.id}, ${subtask.id})">
+                                <span class="subtask-text ${subtask.completed ? 'subtask-complete' : ''}">
+                                    ${subtask.text}
+                                </span>
+                                <button class="delete-btn btn-sm" onclick="deleteSubtask(${task.id}, ${subtask.id})">✕</button>
+                            </div>
+                        `;
+                    });
+                    subtasksHtml += '</div>';
+                }
+                
+                // Subtask input form
+                const subtaskForm = `
+                    <div class="subtask-form">
+                        <input type="text" class="subtask-input" 
+                            placeholder="Add a subtask..." 
+                            onkeypress="if(event.keyCode === 13) addSubtask(${task.id}, this)">
+                        <button class="btn btn-primary btn-sm" 
+                            onclick="addSubtask(${task.id}, this.previousElementSibling)">Add</button>
+                    </div>
                 `;
-                journalList.appendChild(entryDiv);
+                
+                // Progress circle
+                const progressPercentage = task.completed ? 100 : task.progress;
+                const progressCircle = `
+                    <div class="progress-container" onclick="showProgressOptions(${task.id}, ${progressPercentage})">
+                        <div class="progress-circle" style="background: conic-gradient(var(--primary) ${progressPercentage}%, var(--light) ${progressPercentage}%)">
+                            ${progressPercentage}%
+                        </div>
+                    </div>
+                `;
+                
+                taskElement.innerHTML = `
+                    <div class="todo-main">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})">
+                        <span class="todo-text ${task.completed ? 'todo-complete' : ''}">${task.text}</span>
+                        ${progressCircle}
+                        <button class="delete-btn" onclick="deleteTask(${task.id})">✕</button>
+                    </div>
+                    ${dueText ? `<div class="todo-details">Due: ${dueText}</div>` : ''}
+                    ${subtasksHtml}
+                    ${subtaskForm}
+                `;
+                
+                taskList.appendChild(taskElement);
             });
         }
-        function resetTracker() {
-            document.getElementById("journalEntries").innerHTML = "";
-            localStorage.removeItem("journals");
+        
+        function renderMoodLogs() {
+            const moodLog = document.getElementById('moodLog');
+            moodLog.innerHTML = '';
+            
+            if (moodLogs.length === 0) {
+                moodLog.innerHTML = '<p>No mood logs yet.</p>';
+                return;
+            }
+            
+            moodLogs.slice().reverse().forEach(log => {
+                const moodEmoji = {
+                    'angry': '😠',
+                    'sad': '😢',
+                    'neutral': '😐',
+                    'happy': '😊',
+                    'excited': '😆'
+                }[log.mood] || '❓';
+                
+                const logElement = document.createElement('div');
+                logElement.className = 'log-entry';
+                
+                let notesHtml = '';
+                if (log.notes) {
+                    notesHtml = `<div class="log-notes">${log.notes}</div>`;
+                }
+                
+                logElement.innerHTML = `
+                    <strong>${moodEmoji} ${log.mood.charAt(0).toUpperCase() + log.mood.slice(1)}</strong> - ${log.date}
+                    ${notesHtml}
+                `;
+                moodLog.appendChild(logElement);
+            });
+        }
+        
+        // Timer Functions
+        function setupTimer() {
+            document.getElementById('startTimer').addEventListener('click', startTimer);
+            document.getElementById('pauseTimer').addEventListener('click', pauseTimer);
+            document.getElementById('resetTimer').addEventListener('click', resetTimer);
+            
+            // Update timer display initially
+            updateTimerDisplay();
+        }
+        
+        function startTimer() {
+            if (isTimerRunning) return;
+            
+            // Get values from inputs
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+            const seconds = parseInt(document.getElementById('seconds').value) || 0;
+            
+            totalSeconds = minutes * 60 + seconds;
+            
+            if (totalSeconds <= 0) {
+                alert('Please set a valid time!');
+                return;
+            }
+            
+            isTimerRunning = true;
+            updateTimerDisplay();
+            
+            timerInterval = setInterval(() => {
+                totalSeconds--;
+                updateTimerDisplay();
+                
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    alert('Timer completed! Time for some self-care!');
+                }
+            }, 1000);
+        }
+        
+        function pauseTimer() {
+            if (!isTimerRunning) return;
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            totalSeconds = parseInt(document.getElementById('minutes').value) * 60 + parseInt(document.getElementById('seconds').value);
+            updateTimerDisplay();
+        }
+        
+        function updateTimerDisplay() {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
     </script>
 </body>
