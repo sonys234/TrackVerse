@@ -1,0 +1,13 @@
+<div class="slider-bar" id="slider-bar">
+    <div class="slider-content">
+        <!-- Only the login/logout section as per your original -->
+        <div class="slider-bottom">
+            <a href="#" class="settings-btn">Settings</a>
+            {% if session.get("logged_in") %}
+                <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="login-btn">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
