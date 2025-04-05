@@ -35,7 +35,62 @@
             transition: margin-left 0.3s;
         }
 
-        /* Slider Bar - Pastel Theme */
+        body.slider-open {
+            margin-left: 250px;
+        }
+        
+        .top-bar {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--pastel-coral);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
+        }
+
+        .menu-icon {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            transition: transform 0.3s;
+            margin-right: 15px;
+        }
+        
+        .menu-icon .bar {
+            width: 28px;
+            height: 4px;
+            background-color: white;
+            border-radius: 4px;
+            transition: transform 0.3s;
+        }
+        
+        .menu-icon.active .bar:nth-child(1) {
+            transform: translateY(9px) translateX(-10px) rotate(90deg);
+        }
+        
+        .menu-icon.active .bar:nth-child(2) {
+            transform: rotate(90deg);
+        }
+        
+        .menu-icon.active .bar:nth-child(3) {
+            transform: translateY(-9px) translateX(10px) rotate(90deg);
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-right: auto;
+        }
+        
+        .datetime {
+            font-size: 16px;
+            color: #333;
+        }
+
+        /* Slider Bar */
         .slider-bar {
             height: 100%;
             width: 0;
@@ -49,18 +104,12 @@
             transition: 0.3s;
         }
 
-        .slider-content {
-            padding: 60px 20px 20px;
+        .slider-open .slider-bar {
+            width: 250px;
         }
 
-        .slider-bottom {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background-color: #f0f8ff; /* Pastel blue for bottom section */
-            border-top: 1px solid #e6e6fa;
+        .slider-content {
+            padding: 60px 20px 20px;
         }
 
         .slider-header {
@@ -98,56 +147,6 @@
 
         .slider-bar a.logout-btn {
             border-left-color: #ff9aa2; /* Pastel pink */
-        }
-
-        /* When slider is open */
-        body.slider-open {
-            margin-left: 250px;
-        }
-
-        .slider-open .slider-bar {
-            width: 250px;
-        }
-        
-        .top-bar {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: var(--pastel-coral);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 10;
-        }
-
-        .menu-icon {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 24px;
-            height: 18px;
-            cursor: pointer;
-            margin-right: 15px;
-        }
-
-        .menu-icon .bar {
-            height: 3px;
-            width: 100%;
-            background-color: #5a5a5a;
-            border-radius: 2px;
-            transition: all 0.3s;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            flex-grow: 1;
-        }
-        
-        .datetime {
-            font-size: 16px;
-            color: #333;
         }
         
         .main-content {
@@ -187,6 +186,10 @@
         
         .category-card.priority {
             border-left: 5px solid var(--priority-color);
+        }
+        
+        .category-card.empty {
+            background-color: var(--pastel-peach);
         }
         
         .category-header {
@@ -255,7 +258,8 @@
             display: none;
         }
         
-        .category-card.completed .category-delete-btn {
+        .category-card.completed .category-delete-btn,
+        .category-card.empty .category-delete-btn {
             display: block;
         }
         
@@ -571,7 +575,6 @@
     </style>
 </head>
 <body>
-    <!-- Top Bar with Menu Icon -->
     <div class="top-bar">
         <div class="menu-icon" onclick="toggleSlider()">
             <div class="bar"></div>
@@ -588,9 +591,7 @@
             <div class="slider-header">Task Tracker Menu</div>
             <a href="{{ url_for('home') }}">🏠 Home</a>
             <a href="#" class="settings-btn">⚙️ Settings</a>
-            <div class="slider-bottom">
-                <a href="{{ url_for('logout') }}" class="logout-btn">🔒 Logout</a>
-            </div>
+            <a href="{{ url_for('logout') }}" class="logout-btn">🔒 Logout</a>
         </div>
     </div>
     
@@ -757,7 +758,7 @@
             });
         }
         
-        // Toggle slider function
+        // Slider Bar Toggle
         function toggleSlider() {
             document.body.classList.toggle('slider-open');
         }
@@ -821,10 +822,11 @@
             return Math.round(totalProgress / category.tasks.length);
         }
         
-        // Check if category is completed (all tasks 100%)
-        function isCategoryCompleted(category) {
-            if (category.tasks.length === 0) return false;
-            return category.tasks.every(task => task.progress === 100);
+        // Check if category is completed (all tasks 100%) or empty
+        function getCategoryState(category) {
+            if (category.tasks.length === 0) return 'empty';
+            if (category.tasks.every(task => task.progress === 100)) return 'completed';
+            return 'incomplete';
         }
         
         // Render everything
@@ -885,14 +887,14 @@
             // Render all categories
             categories.forEach(category => {
                 const categoryProgress = calculateCategoryProgress(category);
-                const isCompleted = isCategoryCompleted(category);
+                const categoryState = getCategoryState(category);
                 
                 const categoryCard = document.createElement('div');
-                categoryCard.className = `category-card ${isCompleted ? 'completed' : ''} ${category.priority ? 'priority' : ''}`;
+                categoryCard.className = `category-card ${categoryState === 'completed' ? 'completed' : ''} ${categoryState === 'empty' ? 'empty' : ''} ${category.priority ? 'priority' : ''}`;
                 categoryCard.innerHTML = `
                     <div class="category-header">
                         <div class="category-title-container">
-                            <input type="checkbox" class="category-checkbox" ${isCompleted ? 'checked' : ''} data-category-id="${category.id}">
+                            <input type="checkbox" class="category-checkbox" ${categoryState === 'completed' ? 'checked' : ''} data-category-id="${category.id}">
                             <span class="category-priority-star ${category.priority ? 'active' : ''}" data-category-id="${category.id}">★</span>
                             <div class="category-title">${category.name}</div>
                         </div>
@@ -1204,6 +1206,14 @@
         
         // Delete a category
         function deleteCategory(categoryId) {
+            const category = categories.find(c => c.id === categoryId);
+            
+            // Prevent deletion of "Today" category
+            if (category && category.name === "Today") {
+                alert("The 'Today' category cannot be deleted.");
+                return;
+            }
+            
             if (confirm("Are you sure you want to delete this category and all its tasks?")) {
                 categories = categories.filter(c => c.id !== categoryId);
                 saveData();
