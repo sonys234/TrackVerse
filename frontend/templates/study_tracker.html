@@ -6,6 +6,7 @@
     <title>Study Tracker</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300;400;600&display=swap');
         
         :root {
             --pastel-blue: #a2d2ff;
@@ -32,6 +33,81 @@
             background-color: var(--soft-white);
             color: #333;
             transition: all 0.3s ease;
+            transition: margin-left 0.3s;
+        }
+
+        /* Slider Bar - Pastel Theme */
+        .slider-bar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #fff5f5; /* Very light pastel pink */
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            z-index: 20;
+            overflow-x: hidden;
+            transition: 0.3s;
+        }
+
+        .slider-content {
+            padding: 60px 20px 20px;
+        }
+
+        .slider-bottom {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background-color: #f0f8ff; /* Pastel blue for bottom section */
+            border-top: 1px solid #e6e6fa;
+        }
+
+        .slider-header {
+            padding: 15px;
+            background-color: #e2f0cb; /* Pastel green */
+            margin-bottom: 20px;
+            border-radius: 0 0 15px 15px;
+            text-align: center;
+            font-weight: bold;
+            color: #5a5a5a;
+        }
+
+        .slider-bar a {
+            display: block;
+            padding: 12px 15px;
+            text-decoration: none;
+            color: #5a5a5a;
+            font-family: 'Playpen Sans', cursive;
+            font-size: 18px;
+            margin: 5px 0;
+            border-radius: 8px;
+            transition: all 0.3s;
+            background-color: #f8f8ff; /* Off-white with blue tint */
+            border-left: 5px solid #ffb7b2; /* Pastel coral */
+        }
+
+        .slider-bar a:hover {
+            background-color: #e6e6fa; /* Pastel lavender */
+            transform: translateX(5px);
+        }
+
+        .slider-bar a.settings-btn {
+            border-left-color: #b5ead7; /* Pastel mint */
+        }
+
+        .slider-bar a.logout-btn {
+            border-left-color: #ff9aa2; /* Pastel pink */
+        }
+
+        /* When slider is open */
+        body.slider-open {
+            margin-left: 250px;
+        }
+
+        .slider-open .slider-bar {
+            width: 250px;
         }
         
         .top-bar {
@@ -42,19 +118,35 @@
             background-color: var(--pastel-blue);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             position: relative;
+            z-index: 10;
         }
-        
+
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 24px;
+            height: 18px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .menu-icon .bar {
+            height: 3px;
+            width: 100%;
+            background-color: #5a5a5a;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
         .logo {
             font-size: 24px;
             font-weight: bold;
             color: #333;
-            position: absolute;
-            left: 30px;
+            flex-grow: 1;
         }
         
         .datetime {
-            position: absolute;
-            right: 20px;
             font-size: 16px;
             color: #333;
         }
@@ -534,12 +626,28 @@
     </style>
 </head>
 <body>
+    <!-- Top Bar with Menu Icon -->
     <div class="top-bar">
+        <div class="menu-icon" onclick="toggleSlider()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
         <div class="logo">Study Tracker</div>
         <div class="datetime" id="datetime">Loading...</div>
     </div>
-    
-    {% include '_sliderbar.html' %}
+
+    <!-- Slider Bar -->
+    <div class="slider-bar" id="slider-bar">
+        <div class="slider-content">
+            <div class="slider-header">Study Tracker Menu</div>
+            <a href="{{ url_for('home') }}">🏠 Home</a>
+            <a href="#" class="settings-btn">⚙️ Settings</a>
+            <div class="slider-bottom">
+                <a href="{{ url_for('logout') }}" class="logout-btn">🔒 Logout</a>
+            </div>
+        </div>
+    </div>
     
     <div class="main-content">
         <div id="priorityContainer" class="priority-section">
@@ -705,6 +813,21 @@
             // Initialize timer display
             updateTimerDurationDisplay();
         }
+        
+        // Toggle slider function
+        function toggleSlider() {
+            document.body.classList.toggle('slider-open');
+        }
+
+        // Close slider when clicking outside
+        document.addEventListener('click', function(event) {
+            const sliderBar = document.getElementById('slider-bar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!sliderBar.contains(event.target) && event.target !== menuIcon && !menuIcon.contains(event.target)) {
+                document.body.classList.remove('slider-open');
+            }
+        });
         
         // Timer duration controls
         function decreaseTimerDuration() {
