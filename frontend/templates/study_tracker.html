@@ -20,6 +20,9 @@
             --soft-white: #f8f9fa;
             --soft-gray: #e9ecef;
             --priority-color: #FFD166;
+            --urgent-color: #FF6B6B;
+            --approaching-color: #FFD166;
+            --soon-color: #4ECDC4;
         }
         
         * {
@@ -190,6 +193,10 @@
         .subject-card.priority {
             border-left: 5px solid var(--priority-color);
         }
+
+        .subject-card.empty {
+            background-color: var(--pastel-peach);
+        }
         
         .subject-header {
             display: flex;
@@ -257,7 +264,8 @@
             display: none;
         }
         
-        .subject-card.completed .subject-delete-btn {
+        .subject-card.completed .subject-delete-btn,
+        .subject-card.empty .subject-delete-btn {
             display: block;
         }
         
@@ -296,6 +304,21 @@
         .task-item.priority {
             border-left: 5px solid var(--priority-color);
         }
+
+        .task-item.urgent {
+            border-left: 5px solid var(--urgent-color);
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        .task-item.approaching {
+            border-left: 5px solid var(--approaching-color);
+            background-color: rgba(255, 209, 102, 0.1);
+        }
+
+        .task-item.soon {
+            border-left: 5px solid var(--soon-color);
+            background-color: rgba(78, 205, 196, 0.1);
+        }
         
         .priority-star {
             margin-right: 10px;
@@ -329,6 +352,21 @@
         .task-due {
             font-size: 14px;
             color: #666;
+        }
+
+        .task-due.urgent {
+            color: var(--urgent-color);
+            font-weight: bold;
+        }
+
+        .task-due.approaching {
+            color: var(--approaching-color);
+            font-weight: bold;
+        }
+
+        .task-due.soon {
+            color: var(--soon-color);
+            font-weight: bold;
         }
         
         .task-actions {
@@ -471,6 +509,21 @@
             border: 1px solid #ddd;
             border-radius: 6px;
             font-size: 16px;
+        }
+        
+        .time-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .time-input-container input {
+            flex: 1;
+        }
+        
+        .optional-text {
+            color: #666;
+            font-size: 0.9em;
         }
         
         .modal-actions {
@@ -623,6 +676,230 @@
             font-style: italic;
             margin-left: 20px;
         }
+
+        /* Reminder Modal Styles */
+        .reminder-modal .modal-content {
+            max-width: 400px;
+        }
+
+        .reminder-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: var(--soft-gray);
+            border-radius: 8px;
+        }
+
+        .reminder-time {
+            font-weight: bold;
+        }
+
+        .reminder-delete-btn {
+            background-color: var(--pastel-pink);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .reminder-bell {
+            color: var(--priority-color);
+            margin-right: 5px;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--pastel-peach);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            max-width: 300px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-icon {
+            font-size: 24px;
+            margin-right: 10px;
+            color: var(--priority-color);
+        }
+
+        .notification-content {
+            flex-grow: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            margin-left: 10px;
+            color: #666;
+        }
+
+        /* Reminder Button */
+        .reminder-btn {
+            background-color: var(--pastel-yellow);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        /* Reminder Form */
+        .reminder-form {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .reminder-form-group {
+            margin-bottom: 10px;
+        }
+
+        .reminder-form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .reminder-form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .reminder-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* Quick Reminder Options */
+        .quick-reminder-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quick-reminder-btn {
+            padding: 8px;
+            background-color: var(--pastel-lavender);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .quick-reminder-btn:hover {
+            background-color: var(--pastel-blue);
+        }
+
+        /* Reminder Card */
+        .reminder-card {
+            background-color: var(--pastel-yellow);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .reminder-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .reminder-card-title {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .reminder-card-time {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .reminder-card-task {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .reminder-card-due {
+            font-size: 13px;
+            color: #777;
+            font-style: italic;
+        }
+
+        .reminder-card-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .reminder-card-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .reminder-card-snooze {
+            background-color: var(--pastel-blue);
+        }
+
+        .reminder-card-dismiss {
+            background-color: var(--pastel-pink);
+        }
+
+        /* Due Date Status Indicator */
+        .due-date-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .due-date-indicator.urgent {
+            background-color: var(--urgent-color);
+        }
+
+        .due-date-indicator.approaching {
+            background-color: var(--approaching-color);
+        }
+
+        .due-date-indicator.soon {
+            background-color: var(--soon-color);
+        }
     </style>
 </head>
 <body>
@@ -709,8 +986,14 @@
                 <input type="text" id="taskName" placeholder="e.g. Read chapter 3, Solve problems">
             </div>
             <div class="form-group">
-                <label for="taskDueDate">Due Date & Time (Optional)</label>
-                <input type="datetime-local" id="taskDueDate">
+                <label for="taskDueDate">Due Date</label>
+                <input type="date" id="taskDueDate">
+            </div>
+            <div class="form-group">
+                <label for="taskDueTime">Due Time <span class="optional-text">(Optional)</span></label>
+                <div class="time-input-container">
+                    <input type="time" id="taskDueTime">
+                </div>
             </div>
             <div class="modal-actions">
                 <button class="cancel-btn" id="cancelTask">Cancel</button>
@@ -736,10 +1019,52 @@
             </div>
         </div>
     </div>
+
+    <!-- Reminder Modal -->
+    <div class="modal reminder-modal" id="reminderModal">
+        <div class="modal-content">
+            <div class="modal-title">Set Reminder</div>
+            <div id="remindersList"></div>
+            <div class="reminder-form">
+                <div class="quick-reminder-options">
+                    <button class="quick-reminder-btn" data-minutes="5">5 min before</button>
+                    <button class="quick-reminder-btn" data-minutes="10">10 min before</button>
+                    <button class="quick-reminder-btn" data-minutes="30">30 min before</button>
+                    <button class="quick-reminder-btn" data-minutes="60">1 hour before</button>
+                    <button class="quick-reminder-btn" data-minutes="1440">1 day before</button>
+                    <button class="quick-reminder-btn" data-minutes="2880">2 days before</button>
+                </div>
+                <div class="reminder-form-group">
+                    <label for="reminderTime">Custom Reminder Time</label>
+                    <input type="time" id="reminderTime">
+                </div>
+                <div class="reminder-form-group">
+                    <label for="reminderDate">Reminder Date (optional)</label>
+                    <input type="date" id="reminderDate">
+                </div>
+                <div class="reminder-form-actions">
+                    <button class="cancel-btn" id="cancelReminder">Cancel</button>
+                    <button class="submit-btn" id="addReminder">Add Reminder</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Card -->
+    <div class="modal" id="reminderCardModal">
+        <div class="modal-content">
+            <div id="reminderCardContent"></div>
+        </div>
+    </div>
     
     <script>
         // Start with empty subjects array
         let subjects = [];
+        
+        // Reminders
+        let reminders = [];
+        let reminderTimeouts = {};
+        let activeReminders = {};
         
         // DOM elements
         const datetimeElement = document.getElementById('datetime');
@@ -752,6 +1077,8 @@
         const subjectModal = document.getElementById('subjectModal');
         const taskModal = document.getElementById('taskModal');
         const progressModal = document.getElementById('progressModal');
+        const reminderModal = document.getElementById('reminderModal');
+        const reminderCardModal = document.getElementById('reminderCardModal');
         const timerCard = document.getElementById('timerCard');
         const timerCardDisplay = document.getElementById('timerCardDisplay');
         const timerCardTitle = document.getElementById('timerCardTitle');
@@ -762,6 +1089,7 @@
         const timerDurationDisplay = document.getElementById('timerDurationDisplay');
         const decreaseTimerBtn = document.getElementById('decreaseTimer');
         const increaseTimerBtn = document.getElementById('increaseTimer');
+        const reminderCardContent = document.getElementById('reminderCardContent');
         
         // Current state
         let currentSubjectId = null;
@@ -771,6 +1099,8 @@
         let isTimerRunning = false;
         let currentTaskForTimer = null;
         let timerDuration = 25; // Default 25 minutes
+        let currentReminderTask = null;
+        let currentReminder = null;
         
         // Initialize the app
         function init() {
@@ -778,10 +1108,13 @@
             setInterval(updateDateTime, 1000);
             
             // Load data from localStorage if available
-            const savedSubjects = localStorage.getItem('studyTrackerSubjects');
-            if (savedSubjects) {
-                subjects = JSON.parse(savedSubjects);
+            const savedData = localStorage.getItem('studyTrackerData');
+            if (savedData) {
+                const data = JSON.parse(savedData);
+                subjects = data.subjects || [];
+                reminders = data.reminders || [];
                 renderSubjects();
+                scheduleAllReminders();
             } else {
                 showEmptyState();
             }
@@ -794,6 +1127,8 @@
             document.getElementById('cancelTask').addEventListener('click', closeTaskModal);
             document.getElementById('submitTask').addEventListener('click', addTask);
             document.getElementById('closeProgress').addEventListener('click', closeProgressModal);
+            document.getElementById('cancelReminder').addEventListener('click', closeReminderModal);
+            document.getElementById('addReminder').addEventListener('click', addReminder);
             
             // Timer card controls
             timerCardStart.addEventListener('click', startTimer);
@@ -807,6 +1142,14 @@
             document.querySelectorAll('.progress-option').forEach(btn => {
                 btn.addEventListener('click', function() {
                     updateProgress(parseInt(this.getAttribute('data-progress')));
+                });
+            });
+
+            // Quick reminder buttons
+            document.querySelectorAll('.quick-reminder-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const minutes = parseInt(this.getAttribute('data-minutes'));
+                    setQuickReminder(minutes);
                 });
             });
 
@@ -884,6 +1227,15 @@
             datetimeElement.textContent = now.toLocaleDateString('en-US', options);
         }
         
+        // Get today's date in YYYY-MM-DD format
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
         // Calculate subject progress based on average of all task progresses
         function calculateSubjectProgress(subject) {
             if (subject.tasks.length === 0) return 0;
@@ -892,10 +1244,26 @@
             return Math.round(totalProgress / subject.tasks.length);
         }
         
-        // Check if subject is completed (all tasks 100%)
-        function isSubjectCompleted(subject) {
-            if (subject.tasks.length === 0) return false;
-            return subject.tasks.every(task => task.progress === 100);
+        // Check if subject is completed (all tasks 100%) or empty
+        function getSubjectState(subject) {
+            if (subject.tasks.length === 0) return 'empty';
+            if (subject.tasks.every(task => task.progress === 100)) return 'completed';
+            return 'incomplete';
+        }
+
+        // Get due date status (urgent, approaching, soon, or none)
+        function getDueDateStatus(dueDate) {
+            if (!dueDate) return null;
+
+            const now = new Date();
+            const due = new Date(dueDate);
+            const timeDiff = due.getTime() - now.getTime();
+            const daysDiff = timeDiff / (1000 * 3600 * 24);
+
+            if (daysDiff < 1) return 'urgent';      // Due today or overdue
+            if (daysDiff < 3) return 'approaching';  // Due in 1-2 days
+            if (daysDiff < 7) return 'soon';         // Due in 3-6 days
+            return null;                             // Due in more than a week
         }
         
         // Render subjects and tasks with priority copies
@@ -935,14 +1303,14 @@
             // Second pass to render all subjects normally
             subjects.forEach(subject => {
                 const subjectProgress = calculateSubjectProgress(subject);
-                const isCompleted = isSubjectCompleted(subject);
+                const subjectState = getSubjectState(subject);
                 
                 const subjectCard = document.createElement('div');
-                subjectCard.className = `subject-card ${isCompleted ? 'completed' : ''} ${subject.priority ? 'priority' : ''}`;
+                subjectCard.className = `subject-card ${subjectState === 'completed' ? 'completed' : ''} ${subjectState === 'empty' ? 'empty' : ''} ${subject.priority ? 'priority' : ''}`;
                 subjectCard.innerHTML = `
                     <div class="subject-header">
                         <div class="subject-title-container">
-                            <input type="checkbox" class="subject-checkbox" ${isCompleted ? 'checked' : ''} data-subject-id="${subject.id}">
+                            <input type="checkbox" class="subject-checkbox" ${subjectState === 'completed' ? 'checked' : ''} data-subject-id="${subject.id}">
                             <span class="subject-priority-star ${subject.priority ? 'active' : ''}" data-subject-id="${subject.id}">★</span>
                             <div class="subject-title">${subject.name}</div>
                         </div>
@@ -964,20 +1332,35 @@
                 } else {
                     subject.tasks.forEach(task => {
                         const dueDate = task.due ? new Date(task.due) : null;
+                        const dueStatus = task.due ? getDueDateStatus(task.due) : null;
                         const taskItem = document.createElement('div');
-                        taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''} ${task.priority ? 'priority' : ''}`;
+                        taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''} ${task.priority ? 'priority' : ''} ${dueStatus ? dueStatus : ''}`;
+                        
+                        let dueDateHtml = '';
+                        if (dueDate) {
+                            const dueStatusClass = dueStatus ? `task-due ${dueStatus}` : 'task-due';
+                            dueDateHtml = `<div class="${dueStatusClass}">
+                                <span class="due-date-indicator ${dueStatus || ''}"></span>
+                                Due: ${dueDate.toLocaleDateString()} ${task.time ? 'at ' + task.time : ''}
+                            </div>`;
+                        }
+                        
                         taskItem.innerHTML = `
                             <span class="priority-star ${task.priority ? 'active' : ''}" data-subject-id="${subject.id}" data-task-id="${task.id}">★</span>
                             <input type="checkbox" class="task-checkbox" ${task.progress === 100 ? 'checked' : ''} data-subject-id="${subject.id}" data-task-id="${task.id}">
                             <div class="task-info">
-                                <div class="task-name">${task.name}</div>
-                                ${dueDate ? `<div class="task-due">Due: ${dueDate.toLocaleString()}</div>` : ''}
+                                <div class="task-name">${task.name} ${task.reminders && task.reminders.length > 0 ? '<span class="reminder-bell">🔔</span>' : ''}</div>
+                                ${dueDateHtml}
                             </div>
                             <div class="task-actions">
                                 <div class="progress-circle-small" data-subject-id="${subject.id}" data-task-id="${task.id}" style="background: conic-gradient(var(--pastel-green) ${task.progress}%, var(--soft-gray) ${task.progress}%">
                                     ${task.progress}%
                                 </div>
                                 <button class="timer-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Timer</button>
+                                ${task.due || (task.time && !task.reminders) ? `<button class="reminder-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">
+                                    <span>🔔</span>
+                                    ${task.reminders && task.reminders.length > 0 ? 'Edit' : 'Add'}
+                                </button>` : ''}
                                 ${task.progress === 100 ? `<button class="delete-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Delete</button>` : ''}
                             </div>
                         `;
@@ -985,44 +1368,8 @@
                     });
                 }
                 
-                // Add event listener to the add task button for this subject
-                subjectCard.querySelector('.add-task-btn').addEventListener('click', function() {
-                    currentSubjectId = parseInt(this.getAttribute('data-subject-id'));
-                    openTaskModal();
-                });
-                
-                // Add event listener to subject delete button
-                subjectCard.querySelector('.subject-delete-btn').addEventListener('click', function() {
-                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
-                    deleteSubject(subjectId);
-                });
-                
-                // Add event listener to subject checkbox
-                subjectCard.querySelector('.subject-checkbox').addEventListener('change', function() {
-                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
-                    const subject = subjects.find(s => s.id === subjectId);
-                    
-                    // Mark all tasks as completed or not completed
-                    subject.tasks.forEach(task => {
-                        task.progress = this.checked ? 100 : 0;
-                    });
-                    
-                    saveData();
-                    renderSubjects();
-                });
-                
-                // Add event listener to subject priority star
-                subjectCard.querySelector('.subject-priority-star').addEventListener('click', function() {
-                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
-                    const subject = subjects.find(s => s.id === subjectId);
-                    
-                    // Toggle priority
-                    subject.priority = !subject.priority;
-                    this.classList.toggle('active');
-                    
-                    saveData();
-                    renderSubjects();
-                });
+                // Add event listeners
+                addSubjectEventListeners(subjectCard, subject);
             });
             
             // Add event listeners to all task priority stars
@@ -1085,29 +1432,102 @@
                     renderSubjects();
                 });
             });
+
+            // Add event listeners to reminder buttons
+            document.querySelectorAll('.reminder-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const taskId = parseInt(this.getAttribute('data-task-id'));
+                    const subject = subjects.find(s => s.id === subjectId);
+                    currentReminderTask = subject.tasks.find(t => t.id === taskId);
+                    openReminderModal();
+                });
+            });
         }
 
+        // Add event listeners to subject elements
+        function addSubjectEventListeners(subjectCard, subject) {
+            // Add task button
+            subjectCard.querySelector('.add-task-btn')?.addEventListener('click', function() {
+                currentSubjectId = subject.id;
+                openTaskModal();
+            });
+            
+            // Delete button
+            const deleteBtn = subjectCard.querySelector('.subject-delete-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', function() {
+                    deleteSubject(subject.id);
+                });
+            }
+            
+            // Checkbox
+            subjectCard.querySelector('.subject-checkbox')?.addEventListener('change', function() {
+                // Mark all tasks as completed or not completed
+                subject.tasks.forEach(task => {
+                    task.progress = this.checked ? 100 : 0;
+                });
+                
+                saveData();
+                renderSubjects();
+            });
+            
+            // Priority star
+            subjectCard.querySelector('.subject-priority-star')?.addEventListener('click', function() {
+                // Toggle priority
+                subject.priority = !subject.priority;
+                this.classList.toggle('active');
+                
+                saveData();
+                renderSubjects();
+            });
+        }
+        
         // Render a priority task COPY in the priority section
         function renderPriorityTaskCopy(subject, task) {
             const dueDate = task.due ? new Date(task.due) : null;
+            const dueStatus = task.due ? getDueDateStatus(task.due) : null;
             const taskItem = document.createElement('div');
-            taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''} priority`;
+            taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''} priority ${dueStatus ? dueStatus : ''}`;
+            
+            let dueDateHtml = '';
+            if (dueDate) {
+                const dueStatusClass = dueStatus ? `task-due ${dueStatus}` : 'task-due';
+                dueDateHtml = `<div class="${dueStatusClass}">
+                    <span class="due-date-indicator ${dueStatus || ''}"></span>
+                    Due: ${dueDate.toLocaleDateString()} ${task.time ? 'at ' + task.time : ''}
+                </div>`;
+            }
+            
             taskItem.innerHTML = `
                 <span class="priority-star active" data-subject-id="${subject.id}" data-task-id="${task.id}">★</span>
                 <input type="checkbox" class="task-checkbox" ${task.progress === 100 ? 'checked' : ''} data-subject-id="${subject.id}" data-task-id="${task.id}">
                 <div class="task-info">
-                    <div class="task-name">${task.name} <small>(${subject.name})</small></div>
-                    ${dueDate ? `<div class="task-due">Due: ${dueDate.toLocaleString()}</div>` : ''}
+                    <div class="task-name">${task.name} <small>(${subject.name})</small> ${task.reminders && task.reminders.length > 0 ? '<span class="reminder-bell">🔔</span>' : ''}</div>
+                    ${dueDateHtml}
                 </div>
                 <div class="task-actions">
                     <div class="progress-circle-small" data-subject-id="${subject.id}" data-task-id="${task.id}" style="background: conic-gradient(var(--pastel-green) ${task.progress}%, var(--soft-gray) ${task.progress}%">
                         ${task.progress}%
                     </div>
                     <button class="timer-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Timer</button>
+                    ${task.due || (task.time && !task.reminders) ? `<button class="reminder-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">
+                        <span>🔔</span>
+                        ${task.reminders && task.reminders.length > 0 ? 'Edit' : 'Add'}
+                    </button>` : ''}
                     ${task.progress === 100 ? `<button class="delete-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Delete</button>` : ''}
                 </div>
             `;
             priorityItems.appendChild(taskItem);
+
+            // Add event listener to the reminder button
+            taskItem.querySelector('.reminder-btn')?.addEventListener('click', function() {
+                const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                const taskId = parseInt(this.getAttribute('data-task-id'));
+                const subject = subjects.find(s => s.id === subjectId);
+                currentReminderTask = subject.tasks.find(t => t.id === taskId);
+                openReminderModal();
+            });
         }
         
         // Render a priority subject COPY in the priority section
@@ -1130,24 +1550,48 @@
             // Only show priority tasks in the priority section copy
             subject.tasks.filter(task => task.priority).forEach(task => {
                 const dueDate = task.due ? new Date(task.due) : null;
+                const dueStatus = task.due ? getDueDateStatus(task.due) : null;
                 const taskItem = document.createElement('div');
-                taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''}`;
+                taskItem.className = `task-item ${task.progress === 100 ? 'completed' : ''} ${dueStatus ? dueStatus : ''}`;
+                
+                let dueDateHtml = '';
+                if (dueDate) {
+                    const dueStatusClass = dueStatus ? `task-due ${dueStatus}` : 'task-due';
+                    dueDateHtml = `<div class="${dueStatusClass}">
+                        <span class="due-date-indicator ${dueStatus || ''}"></span>
+                        Due: ${dueDate.toLocaleDateString()} ${task.time ? 'at ' + task.time : ''}
+                    </div>`;
+                }
+                
                 taskItem.innerHTML = `
                     <span class="priority-star active" data-subject-id="${subject.id}" data-task-id="${task.id}">★</span>
                     <input type="checkbox" class="task-checkbox" ${task.progress === 100 ? 'checked' : ''} data-subject-id="${subject.id}" data-task-id="${task.id}">
                     <div class="task-info">
-                        <div class="task-name">${task.name}</div>
-                        ${dueDate ? `<div class="task-due">Due: ${dueDate.toLocaleString()}</div>` : ''}
+                        <div class="task-name">${task.name} ${task.reminders && task.reminders.length > 0 ? '<span class="reminder-bell">🔔</span>' : ''}</div>
+                        ${dueDateHtml}
                     </div>
                     <div class="task-actions">
                         <div class="progress-circle-small" data-subject-id="${subject.id}" data-task-id="${task.id}" style="background: conic-gradient(var(--pastel-green) ${task.progress}%, var(--soft-gray) ${task.progress}%">
                             ${task.progress}%
                         </div>
                         <button class="timer-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Timer</button>
+                        ${task.due || (task.time && !task.reminders) ? `<button class="reminder-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">
+                            <span>🔔</span>
+                            ${task.reminders && task.reminders.length > 0 ? 'Edit' : 'Add'}
+                        </button>` : ''}
                         ${task.progress === 100 ? `<button class="delete-btn" data-subject-id="${subject.id}" data-task-id="${task.id}">Delete</button>` : ''}
                     </div>
                 `;
                 taskList.appendChild(taskItem);
+
+                // Add event listener to the reminder button
+                taskItem.querySelector('.reminder-btn')?.addEventListener('click', function() {
+                    const subjectId = parseInt(this.getAttribute('data-subject-id'));
+                    const taskId = parseInt(this.getAttribute('data-task-id'));
+                    const subject = subjects.find(s => s.id === subjectId);
+                    currentReminderTask = subject.tasks.find(t => t.id === taskId);
+                    openReminderModal();
+                });
             });
         }
         
@@ -1173,7 +1617,11 @@
         
         // Save data to localStorage
         function saveData() {
-            localStorage.setItem('studyTrackerSubjects', JSON.stringify(subjects));
+            const data = {
+                subjects: subjects,
+                reminders: reminders
+            };
+            localStorage.setItem('studyTrackerData', JSON.stringify(data));
         }
         
         // Modal functions
@@ -1190,6 +1638,7 @@
             taskModal.style.display = 'flex';
             document.getElementById('taskName').value = '';
             document.getElementById('taskDueDate').value = '';
+            document.getElementById('taskDueTime').value = '';
         }
         
         function closeTaskModal() {
@@ -1209,6 +1658,246 @@
         
         function closeProgressModal() {
             progressModal.style.display = 'none';
+        }
+
+        // Open reminder modal
+        function openReminderModal() {
+            if (!currentReminderTask) return;
+
+            // Initialize the reminders list
+            const remindersList = document.getElementById('remindersList');
+            remindersList.innerHTML = '';
+
+            // Set current date as default for reminder date
+            document.getElementById('reminderDate').value = getTodayDate();
+            document.getElementById('reminderTime').value = '';
+
+            // Show existing reminders
+            if (currentReminderTask.reminders && currentReminderTask.reminders.length > 0) {
+                currentReminderTask.reminders.forEach((reminder, index) => {
+                    const reminderItem = document.createElement('div');
+                    reminderItem.className = 'reminder-item';
+                    reminderItem.innerHTML = `
+                        <div>
+                            <span class="reminder-bell">🔔</span>
+                            <span class="reminder-time">${reminder.time} ${reminder.date ? 'on ' + reminder.date : ''}</span>
+                        </div>
+                        <button class="reminder-delete-btn" data-index="${index}">Delete</button>
+                    `;
+                    remindersList.appendChild(reminderItem);
+                });
+
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.reminder-delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        currentReminderTask.reminders.splice(index, 1);
+                        saveData();
+                        renderSubjects();
+                        openReminderModal(); // Refresh the modal
+                    });
+                });
+            } else {
+                remindersList.innerHTML = '<p>No reminders set for this task.</p>';
+            }
+
+            reminderModal.style.display = 'flex';
+        }
+
+        // Close reminder modal
+        function closeReminderModal() {
+            reminderModal.style.display = 'none';
+            currentReminderTask = null;
+        }
+
+        // Set quick reminder based on minutes before due time
+        function setQuickReminder(minutes) {
+            if (!currentReminderTask) return;
+
+            // Calculate reminder time based on due time
+            let dueTime = currentReminderTask.time || '23:59';
+            let dueDate = currentReminderTask.due || getTodayDate();
+
+            // Parse due time and date
+            const [dueHours, dueMinutes] = dueTime.split(':').map(Number);
+            const [dueYear, dueMonth, dueDay] = dueDate.split('-').map(Number);
+
+            // Create Date object for due time
+            const dueDateTime = new Date(dueYear, dueMonth - 1, dueDay, dueHours, dueMinutes);
+            
+            // Calculate reminder time (subtract minutes)
+            const reminderDateTime = new Date(dueDateTime.getTime() - minutes * 60000);
+
+            // Format reminder time and date
+            const reminderHours = String(reminderDateTime.getHours()).padStart(2, '0');
+            const reminderMinutes = String(reminderDateTime.getMinutes()).padStart(2, '0');
+            const reminderTime = `${reminderHours}:${reminderMinutes}`;
+
+            const reminderYear = reminderDateTime.getFullYear();
+            const reminderMonth = String(reminderDateTime.getMonth() + 1).padStart(2, '0');
+            const reminderDay = String(reminderDateTime.getDate()).padStart(2, '0');
+            const reminderDate = `${reminderYear}-${reminderMonth}-${reminderDay}`;
+
+            // Set the values in the form
+            document.getElementById('reminderTime').value = reminderTime;
+            document.getElementById('reminderDate').value = reminderDate;
+        }
+
+        // Add a new reminder
+        function addReminder() {
+            if (!currentReminderTask) return;
+
+            const time = document.getElementById('reminderTime').value;
+            const date = document.getElementById('reminderDate').value;
+
+            if (!time) {
+                alert('Please enter a reminder time');
+                return;
+            }
+
+            // Initialize reminders array if it doesn't exist
+            if (!currentReminderTask.reminders) {
+                currentReminderTask.reminders = [];
+            }
+
+            // Add the new reminder
+            const newReminder = {
+                time: time,
+                date: date || null
+            };
+
+            currentReminderTask.reminders.push(newReminder);
+
+            // Schedule the reminder
+            scheduleReminder(currentReminderTask);
+
+            saveData();
+            renderSubjects();
+            closeReminderModal();
+        }
+
+        // Schedule all reminders
+        function scheduleAllReminders() {
+            // Clear all existing timeouts
+            Object.values(reminderTimeouts).forEach(timeout => {
+                clearTimeout(timeout);
+            });
+            reminderTimeouts = {};
+
+            // Schedule reminders for all tasks
+            subjects.forEach(subject => {
+                subject.tasks.forEach(task => {
+                    if (task.reminders && task.reminders.length > 0) {
+                        scheduleReminder(task, subject);
+                    }
+                });
+            });
+        }
+
+        // Schedule a single reminder
+        function scheduleReminder(task, subject = null) {
+            if (!task.reminders || task.reminders.length === 0) return;
+
+            task.reminders.forEach((reminder, index) => {
+                // Calculate the reminder time
+                const now = new Date();
+                let reminderDate;
+
+                if (reminder.date) {
+                    // Use the specified date
+                    reminderDate = new Date(`${reminder.date}T${reminder.time}`);
+                } else if (task.due) {
+                    // Use the task's due date
+                    reminderDate = new Date(`${task.due}T${reminder.time}`);
+                } else {
+                    // Use today's date
+                    reminderDate = new Date(`${getTodayDate()}T${reminder.time}`);
+                }
+
+                // If the reminder time is in the past, skip it
+                if (reminderDate < now) {
+                    return;
+                }
+
+                // Calculate timeout duration
+                const timeoutDuration = reminderDate.getTime() - now.getTime();
+
+                // Create a unique key for this reminder
+                const reminderKey = `${task.id}-${index}`;
+
+                // Set the timeout
+                reminderTimeouts[reminderKey] = setTimeout(() => {
+                    showReminderCard(task, subject, reminder);
+                }, timeoutDuration);
+            });
+        }
+
+        // Show reminder card
+        function showReminderCard(task, subject, reminder) {
+            const dueDate = task.due ? new Date(task.due) : null;
+            
+            reminderCardContent.innerHTML = `
+                <div class="reminder-card">
+                    <div class="reminder-card-header">
+                        <div class="reminder-card-title">🔔 Reminder</div>
+                        <div class="reminder-card-time">${reminder.time} ${reminder.date ? 'on ' + reminder.date : ''}</div>
+                    </div>
+                    <div class="reminder-card-task">${task.name}</div>
+                    ${subject ? `<div class="reminder-card-task">Subject: ${subject.name}</div>` : ''}
+                    ${dueDate ? `<div class="reminder-card-due">Due: ${dueDate.toLocaleDateString()} ${task.time ? 'at ' + task.time : ''}</div>` : ''}
+                    <div class="reminder-card-actions">
+                        <button class="reminder-card-btn reminder-card-snooze" id="snoozeReminder">Snooze (10 min)</button>
+                        <button class="reminder-card-btn reminder-card-dismiss" id="dismissReminder">Dismiss</button>
+                    </div>
+                </div>
+            `;
+
+            // Store the current reminder info
+            currentReminder = {
+                task: task,
+                subject: subject,
+                reminder: reminder
+            };
+
+            // Add event listeners
+            document.getElementById('snoozeReminder').addEventListener('click', snoozeReminder);
+            document.getElementById('dismissReminder').addEventListener('click', dismissReminder);
+
+            // Show the modal
+            reminderCardModal.style.display = 'flex';
+        }
+
+        // Snooze reminder
+        function snoozeReminder() {
+            if (!currentReminder) return;
+
+            // Calculate new reminder time (10 minutes from now)
+            const now = new Date();
+            const snoozeTime = new Date(now.getTime() + 10 * 60000); // 10 minutes
+
+            // Format the new reminder time
+            const hours = String(snoozeTime.getHours()).padStart(2, '0');
+            const minutes = String(snoozeTime.getMinutes()).padStart(2, '0');
+            const time = `${hours}:${minutes}`;
+            const date = getTodayDate();
+
+            // Update the reminder
+            currentReminder.reminder.time = time;
+            currentReminder.reminder.date = date;
+
+            // Reschedule the reminder
+            scheduleReminder(currentReminder.task, currentReminder.subject);
+
+            // Save and close
+            saveData();
+            reminderCardModal.style.display = 'none';
+            currentReminder = null;
+        }
+
+        // Dismiss reminder
+        function dismissReminder() {
+            reminderCardModal.style.display = 'none';
+            currentReminder = null;
         }
         
         // Timer card functions
@@ -1297,6 +1986,7 @@
         function addTask() {
             const name = document.getElementById('taskName').value.trim();
             const due = document.getElementById('taskDueDate').value;
+            const time = document.getElementById('taskDueTime').value;
             
             if (!name) {
                 alert('Please enter a task name');
@@ -1308,8 +1998,10 @@
                 id: subject.tasks.length > 0 ? Math.max(...subject.tasks.map(t => t.id)) + 1 : 1,
                 name: name,
                 due: due || null,
+                time: time || null,
                 progress: 0,
-                priority: false
+                priority: false,
+                reminders: []
             };
             
             subject.tasks.push(newTask);
