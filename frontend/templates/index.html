@@ -82,7 +82,8 @@
             z-index: 999;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
+            justify-content: flex-start;
+            padding-top: 80px;
         }
         .slider-bar.open {
             width: 240px;
@@ -91,6 +92,7 @@
         /* Sidebar Buttons - Fixed font and styling */
         .slider-content {
             padding: 20px;
+            width: 100%;
         }
         .slider-bar .btn {
             padding: 12px 15px;
@@ -106,6 +108,7 @@
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: left;
         }
         .settings-btn {
             background: #FFDAC1; /* Pastel peach */
@@ -288,8 +291,8 @@
     <!-- Sidebar with Settings + Logout -->
     <div class="slider-bar" id="slider-bar">
         <div class="slider-content">
-            <a href="#" class="settings-btn">⚙️ Settings</a>
-            <a href="{{ url_for('logout') }}" class="logout-btn">🔒 Logout</a>
+            <a href="#" class="btn settings-btn">⚙️ Settings</a>
+            <a href="{{ url_for('logout') }}" class="btn logout-btn">🔒 Logout</a>
         </div>
     </div>
 
