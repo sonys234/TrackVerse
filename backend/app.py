@@ -177,6 +177,8 @@ def task_tracker():
         return redirect(url_for("login"))
     return render_template("task_tracker.html")
 
+
+
 @app.route("/study-tracker")
 def study_tracker():
     if not session.get("logged_in"):
