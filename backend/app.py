@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta
 import os
-
 
 # Define Base Directories
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
@@ -21,7 +21,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-# Define the User Model
+# Database Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
@@ -31,13 +31,29 @@ class User(db.Model):
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
 
-# Define the Task Model
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
     due_date = db.Column(db.String(20))
     task_time = db.Column(db.String(20))
     priority = db.Column(db.String(20))
+    completed = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class StudyTask(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    due_date = db.Column(db.String(20))
+    due_time = db.Column(db.String(20))
+    progress = db.Column(db.Integer, default=0)
+    priority = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class SelfCareTask(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    due_date = db.Column(db.String(20))
+    due_time = db.Column(db.String(20))
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -50,8 +66,69 @@ with app.app_context():
 def home():
     if not session.get("logged_in"):
         return redirect(url_for("login"))
-    return render_template("index.html", logged_in=session.get("logged_in"), username=session.get("username"))
+    
+    user_id = session.get("user_id")
+    today = datetime.now().strftime("%Y-%m-%d")
+    tomorrow = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+    
+    # Query due tasks from all trackers
+    task_tracker_due = Task.query.filter(
+        Task.user_id == user_id,
+        Task.due_date <= today,
+        Task.completed == False
+    ).all()
+    
+    study_tracker_due = StudyTask.query.filter(
+        StudyTask.user_id == user_id,
+        StudyTask.due_date <= today,
+        StudyTask.progress < 100
+    ).all()
+    
+    selfcare_tracker_due = SelfCareTask.query.filter(
+        SelfCareTask.user_id == user_id,
+        SelfCareTask.due_date <= today,
+        SelfCareTask.completed == False
+    ).all()
+    
+    # Combine all due tasks
+    due_tasks = []
+    
+    for task in task_tracker_due:
+        due_tasks.append({
+            "name": task.name,
+            "due_date": task.due_date,
+            "due_time": task.task_time,
+            "tracker": "task",
+            "status": "today" if task.due_date == today else "overdue"
+        })
+    
+    for task in study_tracker_due:
+        due_tasks.append({
+            "name": task.name,
+            "due_date": task.due_date,
+            "due_time": task.due_time,
+            "tracker": "study",
+            "status": "today" if task.due_date == today else "overdue"
+        })
+    
+    for task in selfcare_tracker_due:
+        due_tasks.append({
+            "name": task.name,
+            "due_date": task.due_date,
+            "due_time": task.due_time,
+            "tracker": "selfcare",
+            "status": "today" if task.due_date == today else "overdue"
+        })
+    
+    # Sort tasks by due date (oldest first)
+    due_tasks.sort(key=lambda x: x["due_date"])
+    
+    return render_template("index.html", 
+                         logged_in=session.get("logged_in"), 
+                         username=session.get("username"),
+                         due_tasks=due_tasks)
 
+# Authentication routes (keep your existing login/signup/logout routes)
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if session.get("logged_in"):
@@ -112,12 +189,10 @@ def signup():
         password = request.form.get("password")
         confirm_password = request.form.get("confirm_password")
         
-        # Validate passwords match
         if password != confirm_password:
             flash("Passwords don't match!", "error")
             return redirect(url_for("signup"))
             
-        # Check if username or email already exists
         existing_user = User.query.filter((User.username == username) | (User.email == email)).first()
         if existing_user:
             flash("Username or email already taken!", "error")
@@ -125,7 +200,6 @@ def signup():
             
         hashed_password = generate_password_hash(password, method="pbkdf2:sha256")
         
-        # Handle PIN if enabled
         enable_pin = request.form.get("enable_pin") == "on"
         pin = None
         if enable_pin:
@@ -138,7 +212,6 @@ def signup():
                 request.form.get("pin6")
             ])
         
-        # Create new user
         new_user = User(
             username=username,
             email=email,
@@ -164,13 +237,7 @@ def logout():
     flash("You have been logged out", "info")
     return redirect(url_for("login"))
 
-@app.route("/profile")
-def profile():
-    if not session.get("logged_in"):
-        return redirect(url_for("login"))
-    return render_template("profile.html", username=session.get("username"))
-
-# Protected Pages
+# Tracker Routes
 @app.route("/task-tracker")
 def task_tracker():
     if not session.get("logged_in"):
@@ -203,9 +270,5 @@ def selfcare_tracker():
         return redirect(url_for("login"))
     return render_template("selfcare_tracker.html")
 
-
-
-
-# Run Flask App
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8000, debug=True)
