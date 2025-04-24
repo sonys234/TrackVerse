@@ -131,7 +131,7 @@
             transition: all 0.3s;
         }
         .slider-bar.open ~ .trackers,
-        .slider-bar.open ~ .due-tasks-card {
+        .slider-bar.open ~ .motivational-quote {
             margin-left: 250px;
         }
 
@@ -159,57 +159,38 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.15);
         }
 
-        /* Due Tasks Card */
-        .due-tasks-card {
+        /* Motivational Quote */
+        .motivational-quote {
             background: white;
             border-radius: 15px;
-            padding: 20px;
-            margin: 20px;
+            padding: 25px;
+            margin: 30px 20px;
             border: 2px solid #FFD3B6;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
         }
-        .due-tasks-card h2 {
-            color: #FF9AA2;
-            margin-top: 0;
-            border-bottom: 2px dashed #FFD3B6;
-            padding-bottom: 10px;
-            font-size: 26px;
-            font-weight: 700;
+        .motivational-quote:before {
+            content: '"';
+            font-size: 80px;
+            color: #FFD3B6;
+            position: absolute;
+            left: 10px;
+            top: -10px;
+            line-height: 1;
         }
-        .due-task {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #FFD3B6;
-            transition: all 0.2s;
-        }
-        .due-task:hover {
-            background: #FFF0F5;
-            transform: translateX(5px);
-        }
-        .task-tracker {
-            font-size: 16px;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-right: 8px;
+        .quote-text {
+            font-size: 20px;
             font-weight: 500;
+            color: #5A5A5A;
+            margin-bottom: 10px;
+            font-style: italic;
         }
-        .task-tracker.task { background: #FF9AA2; }
-        .task-tracker.study { background: #B5EAD7; color: #5A5A5A; }
-        .task-tracker.exercise { background: #C7CEEA; color: #5A5A5A; }
-        .task-tracker.food { background: #E2F0CB; color: #5A5A5A; }
-        .task-tracker.selfcare { background: #FFDAC1; color: #5A5A5A; }
-        .task-due {
+        .quote-author {
             font-size: 16px;
+            color: #FF9AA2;
             font-weight: 600;
-            min-width: 80px;
-            text-align: right;
         }
-        .task-due.today { color: #FF6B6B; }
-        .task-due.tomorrow { color: #FFB347; }
-        .task-due.upcoming { color: #77DD77; }
 
         /* Bottom Circle */
         .bottom-circle {
@@ -272,7 +253,7 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .tracker, .circle, .option, .due-tasks-card, .slider-bar .btn {
+        .tracker, .circle, .option, .motivational-quote, .slider-bar .btn {
             animation: fadeIn 0.5s ease-in-out;
         }
     </style>
@@ -305,25 +286,10 @@
         <a href="{{ url_for('selfcare_tracker') }}" class="tracker">Self Care Tracker</a>
     </div>
 
-    <!-- Due Tasks -->
-    <div class="due-tasks-card">
-        <h2>Due Tasks</h2>
-        <div id="due-tasks-list">
-            <div class="due-task">
-                <div class="task-info">
-                    <div class="task-name">Complete Math Assignment</div>
-                    <span class="task-tracker study">Study</span>
-                </div>
-                <div class="task-due today">Due: Today</div>
-            </div>
-            <div class="due-task">
-                <div class="task-info">
-                    <div class="task-name">30-minute Jog</div>
-                    <span class="task-tracker exercise">Exercise</span>
-                </div>
-                <div class="task-due tomorrow">Due: Tomorrow</div>
-            </div>
-        </div>
+    <!-- Motivational Quote -->
+    <div class="motivational-quote">
+        <div class="quote-text" id="quote-text">The secret of getting ahead is getting started.</div>
+        <div class="quote-author" id="quote-author">— Mark Twain</div>
     </div>
 
     <!-- Bottom Action Button -->
@@ -377,6 +343,39 @@
             document.getElementById("bottom-circle").style.display = "flex";
             document.getElementById("options").style.display = "none";
         });
+
+        // Motivational Quotes
+        const quotes = [
+            {
+                text: "The secret of getting ahead is getting started.",
+                author: "Mark Twain"
+            },
+            {
+                text: "You don't have to be great to start, but you have to start to be great.",
+                author: "Zig Ziglar"
+            },
+            {
+                text: "Small steps every day lead to big results.",
+                author: "Anonymous"
+            },
+            {
+                text: "Productivity is never an accident. It's always the result of commitment to excellence.",
+                author: "Paul J. Meyer"
+            },
+            {
+                text: "The way to get started is to quit talking and begin doing.",
+                author: "Walt Disney"
+            }
+        ];
+
+        function displayRandomQuote() {
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById("quote-text").textContent = randomQuote.text;
+            document.getElementById("quote-author").textContent = `— ${randomQuote.author}`;
+        }
+
+        // Display a random quote when page loads
+        displayRandomQuote();
     </script>
 </body>
 </html>
